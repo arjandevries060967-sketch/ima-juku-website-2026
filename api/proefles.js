@@ -65,8 +65,6 @@ module.exports = async function handler(req, res) {
     const raw = await readBody(req);
     const d   = parseBody(raw);
 
-    console.log('RAW BODY:', raw);
-    console.log('PARSED:', JSON.stringify(d));
 
     const locatieRaw = d['Y8OEFhf1ac[]'];
     // Altijd als array, ook bij één keuze — Laposta checkbox-veld vereist array-notatie
@@ -99,8 +97,6 @@ module.exports = async function handler(req, res) {
         opmerking:             d['kjrtQYYCLh']  || '',
       },
     });
-
-    console.log('Laposta payload:', payload);
 
     const authHeader = 'Basic ' + Buffer.from(apiKey + ':').toString('base64');
 

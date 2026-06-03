@@ -1,6 +1,9 @@
 /**
  * Vercel serverless function: proefles aanmelding
  * Vereiste environment variable in Vercel: LAPOSTA_API_KEY
+ *
+ * Let op: Laposta's API vereist letterlijke blokhaken in veldnamen,
+ * geen URL-encoding van [ en ]. Daarom bouwen we de payload handmatig.
  */
 
 const LIST_ID = '2fueysjced';
@@ -28,6 +31,15 @@ function parseBody(req) {
   });
 }
 
+// Bouw payload met ongeëncodeerde blokhaken voor veldnamen
+function buildPayload(base, fields) {
+  const basePart = new URLSearchParams(base).toString();
+  const fieldPart = Object.entries(fields)
+    .map(([key, val]) => `fields[${key}]=${encodeURIComponent(val)}`)
+    .join('&');
+  return basePart + '&' + fieldPart;
+}
+
 module.exports = async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).send('Method not allowed');
@@ -45,23 +57,27 @@ module.exports = async function handler(req, res) {
       return res.redirect(302, '/proefles?fout=config');
     }
 
-    const payload = new URLSearchParams({
-      list_id:                         LIST_ID,
-      email:                           d['PI6DA7TLP7']  || '',
-      ip:                              (req.headers['x-forwarded-for'] || '').split(',')[0].trim() || '',
-      source_url:                      'https://imajuku.nl/proefles',
-      'fields[voornaam]':              d['VCQticEHHg']  || '',
-      'fields[achternaam]':            d['FEqqKfvEJN']  || '',
-      'fields[leeftijd]':              d['WEiUDNfM7O']  || '',
-      'fields[geslacht]':              d['rmF5mwHbQm']  || '',
-      'fields[ikbenstudent]':          d['wQHcc605z4']  || '',
-      'fields[telefoonnumer]':         d['zZH7Jm1GrV']  || '',
-      'fields[locatie]':               locaties,
-      'fields[proefles1datum]':        d['PcvLnGah3B']  || '',
-      'fields[proefles2datum]':        d['FevVlZuZWq']  || '',
-      'fields[motivatiewaaromaikido]': d['f9g5G3RavQ']  || '',
-      'fields[opmerking]':             d['kjrtQYYCLh']  || '',
-    });
+    const payload = buildPayload(
+      {
+        list_id:    LIST_ID,
+        email:      d['PI6DA7TLP7'] || '',
+        ip:         (req.headers['x-forwarded-for'] || '').split(',')[0].trim() || '',
+        source_url: 'https://imajuku.nl/proefles',
+      },
+      {
+        voornaam:              d['VCQticEHHg']  || '',
+        achternaam:            d['FEqqKfvEJN']  || '',
+        leeftijd:              d['WEiUDNfM7O']  || '',
+        geslacht:              d['rmF5mwHbQm']  || '',
+        ikbenstudent:          d['wQHcc605z4']  || '',
+        telefoonnumer:         d['zZH7Jm1GrV']  || '',   // typo in Laposta: "numer"
+        locatie:               locaties,
+        proefles1datum:        d['PcvLnGah3B']  || '',
+        proefles2datum:        d['FevVlZuZWq']  || '',
+        motivatiewaaromaikido: d['f9g5G3RavQ']  || '',
+        opmerking:             d['kjrtQYYCLh']  || '',
+      }
+    );
 
     const authHeader = 'Basic ' + Buffer.from(apiKey + ':').toString('base64');
 
@@ -71,16 +87,17 @@ module.exports = async function handler(req, res) {
         'Authorization': authHeader,
         'Content-Type': 'application/x-www-form-urlencoded',
       },
-      body: payload.toString(),
+      body: payload,
     });
 
     const result = await lapostaRes.json().catch(() => ({}));
+    console.log('Laposta response:', lapostaRes.status, JSON.stringify(result));
 
     if (lapostaRes.ok) {
       return res.redirect(302, '/bedankt');
     }
 
-    // E-mailadres bestaat al in de lijst (Laposta error code 204)
+    // E-mailadres bestaat al (code 204)
     if (result?.error?.code === 204) {
       return res.redirect(302, '/bedankt?al=1');
     }

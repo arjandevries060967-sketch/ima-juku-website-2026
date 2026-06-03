@@ -6,7 +6,6 @@
 const LIST_ID = '2fueysjced';
 const LAPOSTA_API = 'https://api.laposta.nl/v2/member';
 
-// Lees de raw request body en parse als URL-encoded form data
 function parseBody(req) {
   return new Promise((resolve, reject) => {
     let data = '';
@@ -17,17 +16,13 @@ function parseBody(req) {
         const obj = {};
         for (const [key, value] of params.entries()) {
           if (key in obj) {
-            obj[key] = Array.isArray(obj[key])
-              ? [...obj[key], value]
-              : [obj[key], value];
+            obj[key] = Array.isArray(obj[key]) ? [...obj[key], value] : [obj[key], value];
           } else {
             obj[key] = value;
           }
         }
         resolve(obj);
-      } catch (e) {
-        reject(e);
-      }
+      } catch (e) { reject(e); }
     });
     req.on('error', reject);
   });
@@ -41,41 +36,30 @@ module.exports = async function handler(req, res) {
   try {
     const d = await parseBody(req);
 
-    // Checkbox locatie kan enkelvoudig (string) of meervoudig (array) zijn
     const locatieRaw = d['Y8OEFhf1ac[]'];
-    const locaties = Array.isArray(locatieRaw)
-      ? locatieRaw.join(', ')
-      : locatieRaw || '';
+    const locaties = Array.isArray(locatieRaw) ? locatieRaw.join(', ') : locatieRaw || '';
 
     const apiKey = process.env.LAPOSTA_API_KEY;
-    if (!apiKey) {
-      console.error('LAPOSTA_API_KEY is niet ingesteld');
-      return res.redirect(302, '/proefles?fout=config');
-    }
 
-    // Laposta API gebruikt de custom_name als veldnaam, niet de field_id
     const payload = new URLSearchParams({
-      list_id:                        LIST_ID,
-      email:                          d['PI6DA7TLP7']  || '',
-      ip:                             (req.headers['x-forwarded-for'] || '').split(',')[0].trim()
-                                      || req.socket?.remoteAddress
-                                      || '',
-      source_url:                     'https://imajuku.nl/proefles',
-
-      'fields[voornaam]':             d['VCQticEHHg']  || '',
-      'fields[achternaam]':           d['FEqqKfvEJN']  || '',
-      'fields[leeftijd]':             d['WEiUDNfM7O']  || '',
-      'fields[geslacht]':             d['rmF5mwHbQm']  || '',
-      'fields[ikbenstudent]':         d['wQHcc605z4']  || '',
-      'fields[telefoonnumer]':        d['zZH7Jm1GrV']  || '',   // Let op: typo in Laposta ("numer")
-      'fields[locatie]':              locaties,
-      'fields[proefles1datum]':       d['PcvLnGah3B']  || '',
-      'fields[proefles2datum]':       d['FevVlZuZWq']  || '',
-      'fields[motivatiewaaromaikido]':d['f9g5G3RavQ']  || '',
-      'fields[opmerking]':            d['kjrtQYYCLh']  || '',
+      list_id:                         LIST_ID,
+      email:                           d['PI6DA7TLP7']  || '',
+      ip:                              (req.headers['x-forwarded-for'] || '').split(',')[0].trim() || '',
+      source_url:                      'https://imajuku.nl/proefles',
+      'fields[voornaam]':              d['VCQticEHHg']  || '',
+      'fields[achternaam]':            d['FEqqKfvEJN']  || '',
+      'fields[leeftijd]':              d['WEiUDNfM7O']  || '',
+      'fields[geslacht]':              d['rmF5mwHbQm']  || '',
+      'fields[ikbenstudent]':          d['wQHcc605z4']  || '',
+      'fields[telefoonnumer]':         d['zZH7Jm1GrV']  || '',
+      'fields[locatie]':               locaties,
+      'fields[proefles1datum]':        d['PcvLnGah3B']  || '',
+      'fields[proefles2datum]':        d['FevVlZuZWq']  || '',
+      'fields[motivatiewaaromaikido]': d['f9g5G3RavQ']  || '',
+      'fields[opmerking]':             d['kjrtQYYCLh']  || '',
     });
 
-    const authHeader = 'Basic ' + Buffer.from(apiKey + ':').toString('base64');
+    const authHeader = 'Basic ' + Buffer.from((apiKey || '') + ':').toString('base64');
 
     const lapostaRes = await fetch(LAPOSTA_API, {
       method: 'POST',
@@ -87,22 +71,22 @@ module.exports = async function handler(req, res) {
     });
 
     const result = await lapostaRes.json().catch(() => ({}));
-    console.log('Laposta response:', lapostaRes.status, JSON.stringify(result));
 
-    if (lapostaRes.ok) {
-      return res.redirect(302, '/bedankt');
-    }
-
-    // Al ingeschreven (Laposta error code 308)
-    if (result?.error?.code === 308) {
-      return res.redirect(302, '/bedankt?al=1');
-    }
-
-    console.error('Laposta fout:', result);
-    return res.redirect(302, '/proefles?fout=1');
+    // ── DEBUG: toon alles als JSON ──────────────────────────────
+    // Verwijder dit blok zodra het formulier werkt
+    res.setHeader('Content-Type', 'application/json');
+    return res.status(200).json({
+      debug: true,
+      laposta_status: lapostaRes.status,
+      laposta_response: result,
+      api_key_set: !!apiKey,
+      email_received: d['PI6DA7TLP7'] || '(leeg)',
+      payload_sent: payload.toString(),
+    });
+    // ── EINDE DEBUG ────────────────────────────────────────────
 
   } catch (err) {
-    console.error('Onverwachte fout:', err);
-    return res.redirect(302, '/proefles?fout=1');
+    res.setHeader('Content-Type', 'application/json');
+    return res.status(500).json({ error: err.message, stack: err.stack });
   }
 };

@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Proefles aanvragen — Ima Juku Aikido</title>
+<meta name="description" content="Meld je aan voor een gratis proefles aikido bij Ima Juku in Baarn of Zeist.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --ink:       #1C0E06;
+    --sumi:      #3A1A0A;
+    --stone:     #7A5A45;
+    --mist:      #C9A882;
+    --paper:     #F8F0E3;
+    --white:     #FDF8F2;
+    --red:       #C42B1A;
+    --red-hover: #A82415;
+    --gold:      #D4820A;
+    --gold-soft: #FBF0D5;
+    --border:    rgba(201,168,130,0.35);
+    --font-serif:'DM Serif Display', Georgia, serif;
+    --font-sans: 'Inter', system-ui, sans-serif;
+    --radius:    4px;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: var(--font-sans);
+    background: var(--white);
+    color: var(--ink);
+    font-size: 16px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ─── NAV ─────────────────────────────────── */
+  .site-nav {
+    background: var(--sumi);
+    border-bottom: 1px solid rgba(201,168,130,0.15);
+  }
+
+  .nav-inner {
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: 0 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 64px;
+    gap: 2rem;
+  }
+
+  .nav-logo {
+    font-family: var(--font-serif);
+    font-size: 1.25rem;
+    color: var(--white);
+    text-decoration: none;
+  }
+
+  .nav-logo span {
+    display: block;
+    font-family: var(--font-sans);
+    font-size: 0.58rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-top: 1px;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 0.25rem;
+    list-style: none;
+  }
+
+  .nav-links a {
+    font-size: 0.82rem;
+    color: var(--mist);
+    text-decoration: none;
+    padding: 0.4rem 0.8rem;
+    border-radius: var(--radius);
+    transition: color 0.15s;
+  }
+
+  .nav-links a:hover { color: var(--white); }
+
+  /* ─── PAGE HEADER ─────────────────────────── */
+  .page-header {
+    background: radial-gradient(ellipse at 70% 50%, #3A1A0A 0%, #1C0E06 60%);
+    padding: 5rem 2rem 4rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .page-header::before {
+    content: '今塾';
+    position: absolute;
+    right: 5%;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: clamp(8rem, 15vw, 16rem);
+    color: rgba(255,255,255,0.03);
+    font-family: serif;
+    line-height: 1;
+    pointer-events: none;
+  }
+
+  .page-header .overline {
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--gold);
+    display: block;
+    margin-bottom: 1rem;
+  }
+
+  .page-header h1 {
+    font-family: var(--font-serif);
+    font-size: clamp(2.2rem, 4vw, 3rem);
+    font-weight: 400;
+    color: var(--white);
+    line-height: 1.1;
+    margin-bottom: 1rem;
+  }
+
+  .page-header p {
+    color: var(--mist);
+    font-size: 1rem;
+    max-width: 480px;
+    margin: 0 auto;
+    line-height: 1.75;
+  }
+
+  /* ─── FORM LAYOUT ─────────────────────────── */
+  .form-page {
+    padding: 4rem 2rem 6rem;
+    max-width: 720px;
+    margin: 0 auto;
+  }
+
+  .form-section-label {
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--stone);
+    margin-bottom: 1.5rem;
+    margin-top: 2.5rem;
+    display: block;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .form-section-label:first-child { margin-top: 0; }
+
+  .form-row {
+    display: grid;
+    gap: 1.25rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .form-row.two-col {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .form-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+
+  .form-field label {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--ink);
+    letter-spacing: 0.01em;
+  }
+
+  .form-field label .req {
+    color: var(--red);
+    margin-left: 2px;
+  }
+
+  .form-field input[type="text"],
+  .form-field input[type="email"],
+  .form-field input[type="number"],
+  .form-field input[type="date"],
+  .form-field textarea {
+    font-family: var(--font-sans);
+    font-size: 0.9rem;
+    color: var(--ink);
+    background: var(--white);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius);
+    padding: 0.7rem 0.9rem;
+    width: 100%;
+    outline: none;
+    transition: border-color 0.15s;
+    appearance: none;
+    -webkit-appearance: none;
+  }
+
+  .form-field input:focus,
+  .form-field textarea:focus {
+    border-color: var(--mist);
+    background: var(--white);
+  }
+
+  .form-field input::placeholder,
+  .form-field textarea::placeholder {
+    color: rgba(122,90,69,0.4);
+  }
+
+  .form-field textarea {
+    resize: vertical;
+    min-height: 100px;
+  }
+
+  /* Hint tekst */
+  .form-field .hint {
+    font-size: 0.78rem;
+    color: var(--stone);
+    line-height: 1.5;
+  }
+
+  /* ─── Radio & Checkbox ────────────────────── */
+  .radio-group,
+  .checkbox-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-top: 0.25rem;
+  }
+
+  .radio-group.inline,
+  .checkbox-group.inline {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.5rem;
+  }
+
+  .radio-option,
+  .checkbox-option {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    cursor: pointer;
+  }
+
+  .radio-option input,
+  .checkbox-option input {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 18px;
+    height: 18px;
+    border: 1.5px solid var(--border);
+    background: var(--white);
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: border-color 0.15s, background 0.15s;
+    position: relative;
+  }
+
+  .radio-option input { border-radius: 50%; }
+  .checkbox-option input { border-radius: 3px; }
+
+  .radio-option input:checked {
+    border-color: var(--red);
+    background: var(--red);
+  }
+
+  .radio-option input:checked::after {
+    content: '';
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    background: #fff;
+    border-radius: 50%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  .checkbox-option input:checked {
+    border-color: var(--red);
+    background: var(--red);
+  }
+
+  .checkbox-option input:checked::after {
+    content: '';
+    position: absolute;
+    width: 10px;
+    height: 6px;
+    border-left: 2px solid #fff;
+    border-bottom: 2px solid #fff;
+    top: 3px;
+    left: 2px;
+    transform: rotate(-45deg);
+  }
+
+  .radio-option span,
+  .checkbox-option span {
+    font-size: 0.875rem;
+    color: var(--sumi);
+  }
+
+  /* ─── Datum info block ────────────────────── */
+  .datum-info {
+    background: var(--gold-soft);
+    border-left: 3px solid var(--gold);
+    border-radius: 0 var(--radius) var(--radius) 0;
+    padding: 1rem 1.25rem;
+    font-size: 0.85rem;
+    color: var(--sumi);
+    line-height: 1.65;
+    margin-bottom: 1.25rem;
+  }
+
+  .datum-info strong {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+    color: var(--ink);
+  }
+
+  /* ─── Submit ──────────────────────────────── */
+  .form-submit {
+    margin-top: 2.5rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--border);
+  }
+
+  .btn-submit {
+    font-family: var(--font-sans);
+    font-size: 0.95rem;
+    font-weight: 500;
+    letter-spacing: 0.03em;
+    background: var(--red);
+    color: #fff;
+    border: none;
+    border-radius: var(--radius);
+    padding: 0.9rem 2.5rem;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+
+  .btn-submit:hover { background: var(--red-hover); }
+
+  .submit-note {
+    font-size: 0.8rem;
+    color: var(--stone);
+    margin-top: 0.85rem;
+    line-height: 1.6;
+  }
+
+  /* ─── FOOTER ──────────────────────────────── */
+  .site-footer {
+    background: var(--sumi);
+    padding: 2rem 2rem;
+    text-align: center;
+  }
+
+  .site-footer p {
+    font-size: 0.8rem;
+    color: rgba(201,168,130,0.45);
+  }
+
+  .site-footer a {
+    color: rgba(201,168,130,0.6);
+    text-decoration: none;
+  }
+
+  /* ─── Responsive ──────────────────────────── */
+  @media (max-width: 600px) {
+    .form-row.two-col { grid-template-columns: 1fr; }
+    .nav-links { display: none; }
+    .page-header { padding: 3.5rem 1.5rem 3rem; }
+    .form-page { padding: 2.5rem 1.5rem 4rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<header class="site-nav">
+  <div class="nav-inner">
+    <a href="/" class="nav-logo">
+      Ima Juku
+      <span>Aikido</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="/over">Over aikido</a></li>
+      <li><a href="/leraar">Leraren</a></li>
+      <li><a href="/trainingen">Trainingen</a></li>
+      <li><a href="/contact">Contact</a></li>
+    </ul>
+  </div>
+</header>
+
+<!-- PAGE HEADER -->
+<div class="page-header">
+  <span class="overline">Gratis en vrijblijvend</span>
+  <h1>Vraag een proefles aan</h1>
+  <p>Kom een avond kijken en meedoen. Geen verplichtingen — wel een eerlijke indruk van wat aikido bij Ima Juku is.</p>
+</div>
+
+<!-- FORM -->
+<main class="form-page">
+  <form
+    method="post"
+    action="https://ima-juku-aikido.email-provider.eu/memberforms/subscribe/standalone/form/?a=nkeb37clp0&l=2fueysjced"
+    novalidate
+  >
+    <!-- Honeypot (Laposta bot-bescherming, verborgen houden) -->
+    <input type="text" name="hi-nkeb37clp0-2fueysjced" style="display:none" tabindex="-1" autocomplete="off">
+    <input type="hidden" name="submit-duration" id="submit-duration" value="">
+
+    <!-- Persoonsgegevens -->
+    <span class="form-section-label">Persoonsgegevens</span>
+
+    <div class="form-row two-col">
+      <div class="form-field">
+        <label for="VCQticEHHg">Voornaam <span class="req">*</span></label>
+        <input type="text" id="VCQticEHHg" name="VCQticEHHg" autocomplete="given-name" required>
+      </div>
+      <div class="form-field">
+        <label for="FEqqKfvEJN">Achternaam <span class="req">*</span></label>
+        <input type="text" id="FEqqKfvEJN" name="FEqqKfvEJN" autocomplete="family-name" required>
+      </div>
+    </div>
+
+    <div class="form-row two-col">
+      <div class="form-field">
+        <label for="WEiUDNfM7O">Leeftijd <span class="req">*</span></label>
+        <input type="number" id="WEiUDNfM7O" name="WEiUDNfM7O" min="10" max="99" required>
+      </div>
+      <div class="form-field">
+        <label>Geslacht <span class="req">*</span></label>
+        <div class="radio-group inline">
+          <label class="radio-option">
+            <input type="radio" name="rmF5mwHbQm" value="Man" required>
+            <span>Man</span>
+          </label>
+          <label class="radio-option">
+            <input type="radio" name="rmF5mwHbQm" value="Vrouw">
+            <span>Vrouw</span>
+          </label>
+          <label class="radio-option">
+            <input type="radio" name="rmF5mwHbQm" value="Anders">
+            <span>Anders</span>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-field">
+        <label>Ben je student?</label>
+        <div class="radio-group inline">
+          <label class="radio-option">
+            <input type="radio" name="wQHcc605z4" value="Ja">
+            <span>Ja</span>
+          </label>
+          <label class="radio-option">
+            <input type="radio" name="wQHcc605z4" value="Nee">
+            <span>Nee</span>
+          </label>
+        </div>
+        <span class="hint">Studenten komen mogelijk in aanmerking voor een gereduceerd tarief.</span>
+      </div>
+    </div>
+
+    <!-- Contactgegevens -->
+    <span class="form-section-label">Contactgegevens</span>
+
+    <div class="form-row two-col">
+      <div class="form-field">
+        <label for="PI6DA7TLP7">E-mailadres <span class="req">*</span></label>
+        <input type="email" id="PI6DA7TLP7" name="PI6DA7TLP7" autocomplete="email" required>
+      </div>
+      <div class="form-field">
+        <label for="zZH7Jm1GrV">Telefoonnummer <span class="req">*</span></label>
+        <input type="number" id="zZH7Jm1GrV" name="zZH7Jm1GrV" autocomplete="tel" required>
+      </div>
+    </div>
+
+    <!-- Proefles -->
+    <span class="form-section-label">Proefles plannen</span>
+
+    <div class="form-row">
+      <div class="form-field">
+        <label>Locatie voorkeur <span class="req">*</span></label>
+        <div class="checkbox-group inline">
+          <label class="checkbox-option">
+            <input type="checkbox" name="Y8OEFhf1ac[]" value="Zeist (maandagavond)">
+            <span>Zeist — maandagavond</span>
+          </label>
+          <label class="checkbox-option">
+            <input type="checkbox" name="Y8OEFhf1ac[]" value="Baarn (donderdagavond)">
+            <span>Baarn — donderdagavond</span>
+          </label>
+        </div>
+        <span class="hint">Je mag beide aanvinken.</span>
+      </div>
+    </div>
+
+    <div class="datum-info">
+      <strong>Hoe kies je een datum?</strong>
+      Kies twee data waarop je kunt komen. We bevestigen één van beide per e-mail. Raadpleeg de <a href="/trainingen" style="color:var(--gold);">trainingstijden</a> als je wilt weten wanneer we trainen.
+    </div>
+
+    <div class="form-row two-col">
+      <div class="form-field">
+        <label for="PcvLnGah3B">Proefles 1 — datum <span class="req">*</span></label>
+        <input type="date" id="PcvLnGah3B" name="PcvLnGah3B" required>
+      </div>
+      <div class="form-field">
+        <label for="FevVlZuZWq">Proefles 2 — datum <span class="req">*</span></label>
+        <input type="date" id="FevVlZuZWq" name="FevVlZuZWq" required>
+      </div>
+    </div>
+
+    <!-- Motivatie -->
+    <span class="form-section-label">Nog even kennismaken</span>
+
+    <div class="form-row">
+      <div class="form-field">
+        <label for="f9g5G3RavQ">Waarom aikido? <span class="req">*</span></label>
+        <textarea id="f9g5G3RavQ" name="f9g5G3RavQ" placeholder="Vertel kort waarom je aikido wilt proberen — we zijn oprecht nieuwsgierig." required></textarea>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-field">
+        <label for="kjrtQYYCLh">Opmerking</label>
+        <input type="text" id="kjrtQYYCLh" name="kjrtQYYCLh" placeholder="Iets wat we moeten weten? Blessures, vragen, bijzonderheden.">
+      </div>
+    </div>
+
+    <!-- Submit -->
+    <div class="form-submit">
+      <button type="submit" class="btn-submit">Aanmelden voor proefles</button>
+      <p class="submit-note">Je ontvangt een bevestigingsmail van Laposta. We nemen daarna persoonlijk contact op om de datum te bevestigen.</p>
+    </div>
+
+  </form>
+</main>
+
+<!-- FOOTER -->
+<footer class="site-footer">
+  <p><a href="/">Ima Juku</a> · Aikido in Baarn &amp; Zeist · <a href="/privacy">Privacy</a></p>
+</footer>
+
+<script>
+  // Vul submit-duration in zodat Laposta botsubmissions kan detecteren
+  const startTime = Date.now();
+  window.addEventListener('submit', () => {
+    const dur = Math.round((Date.now() - startTime) / 1000);
+    document.getElementById('submit-duration').value = dur;
+  }, true);
+</script>
+
+</body>
+</html>

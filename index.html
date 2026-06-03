@@ -1,0 +1,937 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ima Juku — Aikido in Baarn & Zeist</title>
+<meta name="description" content="Ima Juku is een open aikidodojo voor volwassenen in Baarn en Zeist. Kom een proefles doen.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  /* ─── Reset ───────────────────────────────────── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  /* ─── Tokens ──────────────────────────────────── */
+  :root {
+    --ink:       #1C0E06;
+    --sumi:      #3A1A0A;
+    --stone:     #7A5A45;
+    --mist:      #C9A882;
+    --paper:     #F8F0E3;
+    --white:     #FDF8F2;
+    --red:       #C42B1A;
+    --red-hover: #A82415;
+    --gold:      #D4820A;
+    --font-serif:'DM Serif Display', Georgia, serif;
+    --font-sans: 'Inter', system-ui, sans-serif;
+    --radius:    4px;
+    --max-w:     1120px;
+    --section-gap: 6rem;
+  }
+
+  /* ─── Base ────────────────────────────────────── */
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: var(--font-sans);
+    background: var(--white);
+    color: var(--ink);
+    font-size: 16px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  img { display: block; max-width: 100%; }
+  a { color: inherit; }
+
+  /* ─── Layout helpers ──────────────────────────── */
+  .container {
+    max-width: var(--max-w);
+    margin: 0 auto;
+    padding: 0 2rem;
+  }
+
+  .overline {
+    font-family: var(--font-sans);
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--stone);
+    display: block;
+  }
+
+  /* ─── Buttons ─────────────────────────────────── */
+  .btn {
+    display: inline-block;
+    font-family: var(--font-sans);
+    font-size: 0.875rem;
+    font-weight: 500;
+    letter-spacing: 0.03em;
+    padding: 0.8rem 1.9rem;
+    border-radius: var(--radius);
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s, border-color 0.15s;
+  }
+
+  .btn-primary {
+    background: var(--red);
+    color: #fff;
+  }
+  .btn-primary:hover { background: var(--red-hover); }
+
+  .btn-outline {
+    background: transparent;
+    color: var(--mist);
+    border: 1.5px solid rgba(201,168,130,0.5);
+  }
+  .btn-outline:hover { border-color: var(--mist); color: var(--white); }
+
+  .btn-outline-dark {
+    background: transparent;
+    color: var(--ink);
+    border: 1.5px solid var(--ink);
+  }
+  .btn-outline-dark:hover { background: var(--ink); color: var(--white); }
+
+  /* ─── NAV ─────────────────────────────────────── */
+  .site-nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: var(--sumi);
+    border-bottom: 1px solid rgba(201,168,130,0.15);
+  }
+
+  .nav-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 64px;
+    gap: 2rem;
+  }
+
+  .nav-logo {
+    font-family: var(--font-serif);
+    font-size: 1.25rem;
+    color: var(--white);
+    text-decoration: none;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .nav-logo span {
+    display: block;
+    font-family: var(--font-sans);
+    font-size: 0.58rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-top: 1px;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 0.25rem;
+    list-style: none;
+    flex: 1;
+    justify-content: center;
+  }
+
+  .nav-links a {
+    font-size: 0.82rem;
+    color: var(--mist);
+    text-decoration: none;
+    padding: 0.4rem 0.8rem;
+    border-radius: var(--radius);
+    letter-spacing: 0.03em;
+    transition: color 0.15s;
+  }
+
+  .nav-links a:hover { color: var(--white); }
+
+  .nav-cta {
+    font-family: var(--font-sans);
+    font-size: 0.82rem;
+    font-weight: 500;
+    background: var(--red);
+    color: #fff;
+    padding: 0.55rem 1.25rem;
+    border-radius: var(--radius);
+    text-decoration: none;
+    letter-spacing: 0.03em;
+    white-space: nowrap;
+    flex-shrink: 0;
+    transition: background 0.15s;
+  }
+  .nav-cta:hover { background: var(--red-hover); }
+
+  /* Hamburger */
+  .nav-toggle {
+    display: none;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0.5rem;
+    color: var(--mist);
+  }
+
+  .nav-toggle svg { display: block; }
+
+  /* Mobile menu */
+  .nav-mobile {
+    display: none;
+    flex-direction: column;
+    background: var(--sumi);
+    border-top: 1px solid rgba(201,168,130,0.15);
+    padding: 1rem 2rem 1.5rem;
+    gap: 0.25rem;
+  }
+
+  .nav-mobile.open { display: flex; }
+
+  .nav-mobile a {
+    font-size: 0.9rem;
+    color: var(--mist);
+    text-decoration: none;
+    padding: 0.6rem 0;
+    border-bottom: 1px solid rgba(201,168,130,0.1);
+    letter-spacing: 0.03em;
+  }
+
+  .nav-mobile a:last-child {
+    border-bottom: none;
+    margin-top: 0.75rem;
+    padding: 0.7rem 1.5rem;
+    background: var(--red);
+    color: #fff;
+    border-radius: var(--radius);
+    text-align: center;
+    font-weight: 500;
+  }
+
+  /* ─── HERO ────────────────────────────────────── */
+  .hero {
+    background: radial-gradient(ellipse at 75% 40%, #3A1A0A 0%, #1C0E06 60%);
+    padding: 7rem 0 6rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: '今塾';
+    position: absolute;
+    right: 5%;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: clamp(10rem, 20vw, 20rem);
+    color: rgba(255,255,255,0.03);
+    font-family: serif;
+    line-height: 1;
+    pointer-events: none;
+    user-select: none;
+  }
+
+  .hero-content {
+    position: relative;
+    max-width: 640px;
+  }
+
+  .hero .overline {
+    color: var(--gold);
+    margin-bottom: 1.25rem;
+  }
+
+  .hero h1 {
+    font-family: var(--font-serif);
+    font-size: clamp(2.6rem, 5.5vw, 4rem);
+    font-weight: 400;
+    color: var(--white);
+    line-height: 1.08;
+    letter-spacing: -0.01em;
+    margin-bottom: 1.5rem;
+  }
+
+  .hero p {
+    font-size: 1.05rem;
+    color: var(--mist);
+    line-height: 1.75;
+    max-width: 520px;
+    margin-bottom: 2.5rem;
+  }
+
+  .hero-buttons {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  /* ─── INTRO ───────────────────────────────────── */
+  .intro {
+    padding: var(--section-gap) 0;
+    background: var(--white);
+  }
+
+  .intro-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 5rem;
+    align-items: center;
+  }
+
+  .intro-text .overline { margin-bottom: 1rem; }
+
+  .intro-text h2 {
+    font-family: var(--font-serif);
+    font-size: clamp(2rem, 3.5vw, 2.75rem);
+    font-weight: 400;
+    line-height: 1.15;
+    margin-bottom: 1.5rem;
+  }
+
+  .intro-text p {
+    color: var(--sumi);
+    line-height: 1.8;
+    margin-bottom: 1rem;
+  }
+
+  .intro-text p + p { margin-top: 1rem; }
+
+  .intro-text a {
+    display: inline-block;
+    margin-top: 1.75rem;
+  }
+
+  .intro-visual {
+    position: relative;
+  }
+
+  .intro-visual .quote-block {
+    background: var(--paper);
+    border-left: 3px solid var(--gold);
+    padding: 2.5rem 2.5rem 2rem;
+    border-radius: 0 var(--radius) var(--radius) 0;
+  }
+
+  .intro-visual .quote-block blockquote {
+    font-family: var(--font-serif);
+    font-size: 1.5rem;
+    font-style: italic;
+    font-weight: 400;
+    line-height: 1.45;
+    color: var(--ink);
+    margin-bottom: 1.25rem;
+  }
+
+  .intro-visual .quote-block cite {
+    font-size: 0.8rem;
+    font-style: normal;
+    color: var(--stone);
+    letter-spacing: 0.05em;
+  }
+
+  .intro-kanjis {
+    display: flex;
+    gap: 1.5rem;
+    margin-top: 2rem;
+  }
+
+  .kanji-item {
+    text-align: center;
+  }
+
+  .kanji-item .kanji {
+    font-size: 2.5rem;
+    line-height: 1;
+    color: var(--ink);
+    font-family: serif;
+    display: block;
+    margin-bottom: 0.35rem;
+  }
+
+  .kanji-item .kanji-label {
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--stone);
+  }
+
+  /* ─── TRAININGEN ──────────────────────────────── */
+  .trainingen {
+    background: var(--paper);
+    padding: var(--section-gap) 0;
+  }
+
+  .trainingen-header {
+    text-align: center;
+    margin-bottom: 3.5rem;
+  }
+
+  .trainingen-header .overline { margin-bottom: 1rem; justify-content: center; }
+
+  .trainingen-header h2 {
+    font-family: var(--font-serif);
+    font-size: clamp(1.8rem, 3vw, 2.5rem);
+    font-weight: 400;
+  }
+
+  .locaties-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 3rem;
+  }
+
+  .locatie-card {
+    background: var(--white);
+    border-radius: var(--radius);
+    padding: 2rem 2rem 2rem;
+    border: 1px solid rgba(201,168,130,0.3);
+  }
+
+  .locatie-card .card-tag {
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--red);
+    margin-bottom: 0.75rem;
+    display: block;
+  }
+
+  .locatie-card h3 {
+    font-family: var(--font-serif);
+    font-size: 1.5rem;
+    font-weight: 400;
+    margin-bottom: 1.25rem;
+    line-height: 1.2;
+  }
+
+  .schedule-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-bottom: 1.75rem;
+  }
+
+  .schedule-list li {
+    display: flex;
+    gap: 1rem;
+    align-items: baseline;
+  }
+
+  .schedule-day {
+    font-weight: 500;
+    font-size: 0.875rem;
+    min-width: 90px;
+    color: var(--ink);
+  }
+
+  .schedule-time {
+    font-size: 0.875rem;
+    color: var(--stone);
+  }
+
+  .locatie-meta {
+    font-size: 0.8rem;
+    color: var(--stone);
+    line-height: 1.6;
+    padding-top: 1.25rem;
+    border-top: 1px solid rgba(201,168,130,0.3);
+  }
+
+  .kosten-block {
+    background: var(--white);
+    border-radius: var(--radius);
+    padding: 2rem 2.5rem;
+    border: 1px solid rgba(201,168,130,0.3);
+    display: flex;
+    gap: 3rem;
+    flex-wrap: wrap;
+    align-items: flex-start;
+  }
+
+  .kosten-block .overline { margin-bottom: 0.75rem; }
+
+  .kosten-item h4 {
+    font-family: var(--font-serif);
+    font-size: 1.75rem;
+    font-weight: 400;
+    color: var(--ink);
+    line-height: 1;
+  }
+
+  .kosten-item p {
+    font-size: 0.82rem;
+    color: var(--stone);
+    margin-top: 0.3rem;
+    line-height: 1.5;
+  }
+
+  .kosten-note {
+    flex: 1;
+    min-width: 240px;
+    font-size: 0.875rem;
+    color: var(--stone);
+    line-height: 1.7;
+    padding-top: 0.25rem;
+  }
+
+  /* ─── CTA PROEFLES ────────────────────────────── */
+  .cta-section {
+    background: radial-gradient(ellipse at 50% 120%, #3A1A0A 0%, #1C0E06 55%);
+    padding: var(--section-gap) 0;
+    text-align: center;
+  }
+
+  .cta-section .overline {
+    color: var(--gold);
+    justify-content: center;
+    margin-bottom: 1.25rem;
+  }
+
+  .cta-section h2 {
+    font-family: var(--font-serif);
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 400;
+    color: var(--white);
+    line-height: 1.15;
+    margin-bottom: 1.25rem;
+  }
+
+  .cta-section p {
+    color: var(--mist);
+    font-size: 1rem;
+    line-height: 1.75;
+    max-width: 500px;
+    margin: 0 auto 2.5rem;
+  }
+
+  .cta-section .cta-note {
+    margin-top: 1.25rem;
+    font-size: 0.8rem;
+    color: rgba(201,168,130,0.6);
+  }
+
+  /* ─── LERAREN STRIP ───────────────────────────── */
+  .leraren {
+    padding: var(--section-gap) 0;
+    background: var(--white);
+  }
+
+  .leraren-header {
+    margin-bottom: 3rem;
+  }
+
+  .leraren-header .overline { margin-bottom: 1rem; }
+
+  .leraren-header h2 {
+    font-family: var(--font-serif);
+    font-size: clamp(1.8rem, 3vw, 2.4rem);
+    font-weight: 400;
+  }
+
+  .leraren-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .leraar-card {
+    border-top: 2px solid var(--mist);
+    padding-top: 1.25rem;
+  }
+
+  .leraar-card .naam {
+    font-family: var(--font-serif);
+    font-size: 1.3rem;
+    font-weight: 400;
+    margin-bottom: 0.25rem;
+  }
+
+  .leraar-card .dan {
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--stone);
+    margin-bottom: 0.75rem;
+    display: block;
+  }
+
+  .leraar-card .bio {
+    font-size: 0.875rem;
+    color: var(--stone);
+    line-height: 1.65;
+  }
+
+  /* ─── FOOTER ──────────────────────────────────── */
+  .site-footer {
+    background: var(--sumi);
+    padding: 3.5rem 0 2rem;
+    color: var(--mist);
+  }
+
+  .footer-inner {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 3rem;
+    padding-bottom: 3rem;
+    border-bottom: 1px solid rgba(201,168,130,0.15);
+    margin-bottom: 2rem;
+  }
+
+  .footer-brand .logo {
+    font-family: var(--font-serif);
+    font-size: 1.4rem;
+    color: var(--white);
+    display: block;
+    margin-bottom: 0.25rem;
+  }
+
+  .footer-brand .sub {
+    font-size: 0.65rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 1rem;
+    display: block;
+  }
+
+  .footer-brand p {
+    font-size: 0.82rem;
+    line-height: 1.7;
+    color: rgba(201,168,130,0.7);
+  }
+
+  .footer-col h4 {
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--mist);
+    margin-bottom: 1rem;
+  }
+
+  .footer-col ul {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .footer-col ul li a {
+    font-size: 0.875rem;
+    color: rgba(201,168,130,0.65);
+    text-decoration: none;
+    transition: color 0.15s;
+  }
+
+  .footer-col ul li a:hover { color: var(--mist); }
+
+  .footer-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+    font-size: 0.78rem;
+    color: rgba(201,168,130,0.4);
+  }
+
+  .footer-bottom a {
+    color: rgba(201,168,130,0.4);
+    text-decoration: none;
+  }
+
+  .footer-bottom a:hover { color: var(--mist); }
+
+  /* ─── Responsive ──────────────────────────────── */
+  @media (max-width: 768px) {
+    :root { --section-gap: 4rem; }
+
+    .nav-links, .nav-cta { display: none; }
+    .nav-toggle { display: block; }
+
+    .intro-grid { grid-template-columns: 1fr; gap: 3rem; }
+    .intro-visual { order: -1; }
+
+    .footer-inner { grid-template-columns: 1fr; gap: 2rem; }
+
+    .kosten-block { gap: 2rem; }
+  }
+
+  @media (max-width: 520px) {
+    .hero { padding: 5rem 0 4rem; }
+    .hero::before { font-size: 8rem; top: auto; bottom: -2rem; right: -1rem; transform: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ─── NAV ──────────────────────────────────────── -->
+<header class="site-nav">
+  <div class="container">
+    <nav class="nav-inner">
+      <a href="/" class="nav-logo">
+        Ima Juku
+        <span>Aikido</span>
+      </a>
+      <ul class="nav-links">
+        <li><a href="/over">Over aikido</a></li>
+        <li><a href="/leraar">Leraren</a></li>
+        <li><a href="/trainingen">Trainingen</a></li>
+        <li><a href="/contact">Contact</a></li>
+      </ul>
+      <a href="/proefles.html" class="nav-cta">Proefles aanvragen</a>
+      <button class="nav-toggle" aria-label="Menu openen" onclick="this.closest('header').nextElementSibling?.classList.toggle('open') || document.getElementById('nav-mobile').classList.toggle('open')">
+        <svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+          <line x1="2" y1="6" x2="20" y2="6"/>
+          <line x1="2" y1="11" x2="20" y2="11"/>
+          <line x1="2" y1="16" x2="20" y2="16"/>
+        </svg>
+      </button>
+    </nav>
+  </div>
+</header>
+
+<nav class="nav-mobile" id="nav-mobile">
+  <a href="/over">Over aikido</a>
+  <a href="/leraar">Leraren</a>
+  <a href="/trainingen">Trainingen</a>
+  <a href="/contact">Contact</a>
+  <a href="/proefles.html">Proefles aanvragen</a>
+</nav>
+
+<!-- ─── HERO ──────────────────────────────────────── -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-content">
+      <span class="overline">Aikido · Baarn &amp; Zeist</span>
+      <h1>Beweeg vanuit<br>rust. Leer van<br>binnenuit.</h1>
+      <p>Ima Juku is een open aikidodojo voor volwassenen. Geen wedstrijdsport — wél diepgang, techniek en gemeenschap. Beginners zijn altijd welkom.</p>
+      <div class="hero-buttons">
+        <a href="/proefles.html" class="btn btn-primary">Vraag een proefles aan</a>
+        <a href="/trainingen" class="btn btn-outline">Trainingstijden bekijken</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── INTRO ─────────────────────────────────────── -->
+<section class="intro">
+  <div class="container">
+    <div class="intro-grid">
+      <div class="intro-text">
+        <span class="overline">Wat is aikido?</span>
+        <h2>Een krijgskunst zonder winnaars of verliezers</h2>
+        <p>Aikido is een Japanse krijgskunst die zich richt op harmonie en controle — niet op kracht of overwinning. Je leert de energie van een aanval omleiden, niet blokkeren. Dat vraagt aandacht, timing en precisie.</p>
+        <p>Bij Ima Juku trainen we in een directe lijn vanuit Japan. De techniek is authentiek, de sfeer open. Je hoeft geen specifieke conditie of achtergrond te hebben.</p>
+        <a href="/over" class="btn btn-outline-dark">Meer over aikido</a>
+      </div>
+      <div class="intro-visual">
+        <div class="quote-block">
+          <blockquote>"Aikido is niet de weg van de strijd, maar de weg van de vrede."</blockquote>
+          <cite>Morihei Ueshiba — oprichter van aikido</cite>
+        </div>
+        <div class="intro-kanjis">
+          <div class="kanji-item">
+            <span class="kanji">合</span>
+            <span class="kanji-label">ai — harmonie</span>
+          </div>
+          <div class="kanji-item">
+            <span class="kanji">気</span>
+            <span class="kanji-label">ki — energie</span>
+          </div>
+          <div class="kanji-item">
+            <span class="kanji">道</span>
+            <span class="kanji-label">do — weg</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── TRAININGEN ────────────────────────────────── -->
+<section class="trainingen" id="trainingen">
+  <div class="container">
+    <div class="trainingen-header">
+      <span class="overline">Waar &amp; wanneer</span>
+      <h2>Trainingen in Baarn en Zeist</h2>
+    </div>
+
+    <div class="locaties-grid">
+      <div class="locatie-card">
+        <span class="card-tag">Baarn</span>
+        <h3>Sporthal De Trompetter</h3>
+        <ul class="schedule-list">
+          <li>
+            <span class="schedule-day">Dinsdag</span>
+            <span class="schedule-time">19:45 – 21:15</span>
+          </li>
+          <li>
+            <span class="schedule-day">Donderdag</span>
+            <span class="schedule-time">19:45 – 21:15</span>
+          </li>
+        </ul>
+        <p class="locatie-meta">
+          De Trompetter 3, Baarn<br>
+          Vrij natrainen tot 21:30
+        </p>
+      </div>
+
+      <div class="locatie-card">
+        <span class="card-tag">Zeist</span>
+        <h3>Sporthal Zeist-Noord</h3>
+        <ul class="schedule-list">
+          <li>
+            <span class="schedule-day">Maandag</span>
+            <span class="schedule-time">19:45 – 21:15</span>
+          </li>
+          <li>
+            <span class="schedule-day">Woensdag</span>
+            <span class="schedule-time">19:45 – 21:15</span>
+          </li>
+        </ul>
+        <p class="locatie-meta">
+          Sportlaan 12, Zeist<br>
+          Vrij natrainen tot 21:30
+        </p>
+      </div>
+
+      <div class="locatie-card">
+        <span class="card-tag">Beide locaties</span>
+        <h3>Zaterdag ochtendtraining</h3>
+        <ul class="schedule-list">
+          <li>
+            <span class="schedule-day">Zaterdag</span>
+            <span class="schedule-time">10:00 – 12:00</span>
+          </li>
+        </ul>
+        <p class="locatie-meta">
+          Wisselend Baarn / Zeist<br>
+          Rooster via de nieuwsbrief
+        </p>
+      </div>
+    </div>
+
+    <div class="kosten-block">
+      <div>
+        <span class="overline">Contributie</span>
+        <div style="display:flex; gap:2.5rem; flex-wrap:wrap; margin-top:0.75rem;">
+          <div class="kosten-item">
+            <h4>€ 60</h4>
+            <p>per maand<br>onbeperkt trainen</p>
+          </div>
+          <div class="kosten-item">
+            <h4>€ 0</h4>
+            <p>proefles<br>geheel gratis</p>
+          </div>
+        </div>
+      </div>
+      <p class="kosten-note">
+        De contributie geldt voor beide locaties — je kunt alle trainingen volgen. Instromen kan altijd, op elk moment van het jaar. Meld je aan via het proeflesformulier en kom een avond kijken.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ─── LERAREN ───────────────────────────────────── -->
+<section class="leraren">
+  <div class="container">
+    <div class="leraren-header">
+      <span class="overline">De leraren</span>
+      <h2>Wie staat er op de mat</h2>
+    </div>
+    <div class="leraren-grid">
+      <div class="leraar-card">
+        <p class="naam">Arjan de Vries</p>
+        <span class="dan">6de dan · hoofdleraar</span>
+        <p class="bio">Meer dan 30 jaar aikido-ervaring. Opgeleid in de Japanse traditie. Geeft les in Baarn en Zeist en is verantwoordelijk voor de lijnvoering van de dojo.</p>
+      </div>
+      <div class="leraar-card">
+        <p class="naam">Rudi</p>
+        <span class="dan">Leraar · Baarn</span>
+        <p class="bio">Geeft de maandagtraining in Baarn. Scherpe techniek, directe uitleg.</p>
+      </div>
+      <div class="leraar-card">
+        <p class="naam">Dennis</p>
+        <span class="dan">Leraar · Zeist</span>
+        <p class="bio">Verantwoordelijk voor de trainingen in Zeist. Solide basisopbouw voor beginners en gevorderden.</p>
+      </div>
+      <div class="leraar-card">
+        <p class="naam">Martijn</p>
+        <span class="dan">Leraar · Zeist</span>
+        <p class="bio">Traint en begeleidt in Zeist. Goede oog voor de voortgang van individuele leerlingen.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── CTA ───────────────────────────────────────── -->
+<section class="cta-section">
+  <div class="container">
+    <span class="overline" style="display:block; text-align:center;">Kom een keer langs</span>
+    <h2>Een proefles kost<br>niets en verplicht niets</h2>
+    <p>Kom een avond kijken en meedoen. Je hoeft geen ervaring te hebben — en geen beslissing te nemen. Je krijgt een eerlijke indruk van wat aikido bij Ima Juku is.</p>
+    <a href="/proefles.html" class="btn btn-primary">Proefles aanvragen</a>
+    <p class="cta-note">Aanmelding via Laposta · We sturen je een bevestiging</p>
+  </div>
+</section>
+
+<!-- ─── FOOTER ────────────────────────────────────── -->
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <span class="logo">Ima Juku</span>
+        <span class="sub">Aikido · Baarn &amp; Zeist</span>
+        <p>Een open dojo voor volwassenen die aikido serieus willen beoefenen. Directe lijn vanuit de Japanse traditie.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Navigatie</h4>
+        <ul>
+          <li><a href="/over">Over aikido</a></li>
+          <li><a href="/leraar">Leraren</a></li>
+          <li><a href="/trainingen">Trainingen</a></li>
+          <li><a href="/contact">Contact</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Direct</h4>
+        <ul>
+          <li><a href="/proefles.html">Proefles aanvragen</a></li>
+          <li><a href="https://portaal.imajuku.nl">Ledenportaal</a></li>
+          <li><a href="mailto:info@imajuku.nl">info@imajuku.nl</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 Ima Juku</span>
+      <span><a href="/privacy">Privacy</a></span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Mobile menu toggle
+  const toggle = document.querySelector('.nav-toggle');
+  const mobileNav = document.getElementById('nav-mobile');
+  if (toggle && mobileNav) {
+    toggle.addEventListener('click', () => {
+      mobileNav.classList.toggle('open');
+    });
+  }
+</script>
+
+</body>
+</html>

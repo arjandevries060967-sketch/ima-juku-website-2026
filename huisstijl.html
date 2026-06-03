@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ima Juku — Huisstijl</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  /* ─── Reset ─────────────────────────────────── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  /* ─── Tokens ─────────────────────────────────── */
+  :root {
+    --ink:        #1C0E06;   /* warm donkerbruin — vervangt zwart */
+    --sumi:       #3A1A0A;   /* diep bruin */
+    --stone:      #7A5A45;   /* warme middentint */
+    --mist:       #C9A882;   /* zandgoud */
+    --paper:      #F8F0E3;   /* warm crème */
+    --white:      #FDF8F2;   /* warm wit */
+
+    --red:        #C42B1A;   /* karmozijn — uit het logo */
+    --red-soft:   #F5DEDA;
+
+    --gold:       #D4820A;   /* amber/goud — uit het logo */
+    --gold-soft:  #FBF0D5;
+
+    --font-serif: 'DM Serif Display', Georgia, serif;
+    --font-sans:  'Inter', system-ui, sans-serif;
+
+    --radius:     4px;
+    --gap:        2rem;
+  }
+
+  /* ─── Base ───────────────────────────────────── */
+  body {
+    font-family: var(--font-sans);
+    background: var(--white);
+    color: var(--ink);
+    font-size: 16px;
+    line-height: 1.6;
+  }
+
+  /* ─── Layout ─────────────────────────────────── */
+  .page { max-width: 900px; margin: 0 auto; padding: 4rem 2rem 8rem; }
+
+  section { margin-bottom: 5rem; }
+
+  .label {
+    font-family: var(--font-sans);
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--stone);
+    margin-bottom: 1.5rem;
+    display: block;
+  }
+
+  h2 {
+    font-family: var(--font-serif);
+    font-size: 1.6rem;
+    font-weight: 400;
+    margin-bottom: 0.5rem;
+  }
+
+  .divider {
+    border: none;
+    border-top: 1px solid var(--mist);
+    margin: 2rem 0;
+  }
+
+  /* ─── Header ─────────────────────────────────── */
+  .brand-header {
+    border-bottom: 1px solid var(--mist);
+    padding-bottom: 3rem;
+    margin-bottom: 5rem;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 2rem;
+    flex-wrap: wrap;
+  }
+
+  .brand-header .logo-area h1 {
+    font-family: var(--font-serif);
+    font-size: 3rem;
+    font-weight: 400;
+    line-height: 1;
+    letter-spacing: -0.01em;
+  }
+
+  .brand-header .logo-area .tagline {
+    font-size: 0.85rem;
+    color: var(--stone);
+    margin-top: 0.5rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .brand-header .meta {
+    text-align: right;
+    font-size: 0.8rem;
+    color: var(--stone);
+    line-height: 1.8;
+  }
+
+  /* ─── Colors ─────────────────────────────────── */
+  .color-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    gap: 1rem;
+  }
+
+  .swatch {
+    border-radius: var(--radius);
+    overflow: hidden;
+    border: 1px solid rgba(0,0,0,0.07);
+  }
+
+  .swatch-block {
+    height: 72px;
+  }
+
+  .swatch-info {
+    padding: 0.6rem 0.75rem;
+    background: var(--white);
+  }
+
+  .swatch-info strong {
+    display: block;
+    font-size: 0.8rem;
+    font-weight: 600;
+  }
+
+  .swatch-info span {
+    font-size: 0.72rem;
+    color: var(--stone);
+    font-family: monospace;
+  }
+
+  /* ─── Typography ─────────────────────────────── */
+  .type-sample { margin-bottom: 2rem; }
+
+  .type-sample + .type-sample { border-top: 1px solid var(--mist); padding-top: 2rem; }
+
+  .type-meta {
+    font-size: 0.75rem;
+    color: var(--stone);
+    font-family: monospace;
+    margin-top: 0.4rem;
+  }
+
+  .sample-h1 { font-family: var(--font-serif); font-size: 3.5rem; font-weight: 400; line-height: 1.1; letter-spacing: -0.01em; }
+  .sample-h2 { font-family: var(--font-serif); font-size: 2.2rem; font-weight: 400; line-height: 1.2; }
+  .sample-h3 { font-family: var(--font-serif); font-size: 1.4rem; font-weight: 400; font-style: italic; line-height: 1.3; }
+  .sample-overline { font-family: var(--font-sans); font-size: 0.72rem; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--stone); }
+  .sample-body { font-family: var(--font-sans); font-size: 1rem; font-weight: 400; line-height: 1.7; max-width: 55ch; color: var(--sumi); }
+  .sample-small { font-family: var(--font-sans); font-size: 0.85rem; color: var(--stone); line-height: 1.6; }
+
+  /* ─── Buttons ────────────────────────────────── */
+  .btn-row { display: flex; gap: 1rem; flex-wrap: wrap; align-items: center; }
+
+  .btn {
+    display: inline-block;
+    font-family: var(--font-sans);
+    font-size: 0.875rem;
+    font-weight: 500;
+    letter-spacing: 0.03em;
+    padding: 0.75rem 1.75rem;
+    border-radius: var(--radius);
+    cursor: pointer;
+    border: none;
+    text-decoration: none;
+  }
+
+  .btn-primary {
+    background: var(--red);
+    color: #fff;
+  }
+
+  .btn-secondary {
+    background: transparent;
+    color: var(--ink);
+    border: 1.5px solid var(--ink);
+  }
+
+  .btn-ghost {
+    background: transparent;
+    color: var(--stone);
+    border: 1.5px solid var(--mist);
+  }
+
+  /* ─── UI Components ──────────────────────────── */
+  .card-demo {
+    background: var(--paper);
+    border-radius: var(--radius);
+    padding: 2rem;
+    max-width: 380px;
+  }
+
+  .card-demo .card-label {
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--red);
+    margin-bottom: 0.75rem;
+  }
+
+  .card-demo h3 {
+    font-family: var(--font-serif);
+    font-size: 1.4rem;
+    font-weight: 400;
+    margin-bottom: 0.75rem;
+  }
+
+  .card-demo p {
+    font-size: 0.9rem;
+    color: var(--stone);
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+  }
+
+  /* ─── Nav demo ───────────────────────────────── */
+  .nav-demo {
+    background: var(--sumi);
+    padding: 1rem 2rem;
+    border-radius: var(--radius);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 2rem;
+  }
+
+  .nav-demo .nav-logo {
+    font-family: var(--font-serif);
+    font-size: 1.2rem;
+    color: var(--white);
+    font-weight: 400;
+  }
+
+  .nav-demo .nav-links {
+    display: flex;
+    gap: 1.5rem;
+    list-style: none;
+  }
+
+  .nav-demo .nav-links li a {
+    font-size: 0.8rem;
+    color: var(--mist);
+    text-decoration: none;
+    letter-spacing: 0.04em;
+  }
+
+  .nav-demo .nav-cta {
+    font-family: var(--font-sans);
+    font-size: 0.8rem;
+    font-weight: 500;
+    background: var(--red);
+    color: #fff;
+    padding: 0.5rem 1.2rem;
+    border-radius: var(--radius);
+    text-decoration: none;
+    letter-spacing: 0.03em;
+    white-space: nowrap;
+  }
+
+  /* ─── Hero teaser ────────────────────────────── */
+  .hero-demo {
+    background: radial-gradient(ellipse at 70% 50%, #3A1A0A 0%, #1C0E06 65%);
+    border-radius: var(--radius);
+    padding: 4rem 3rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-demo::before {
+    content: '今塾';
+    position: absolute;
+    right: 2rem;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 9rem;
+    color: rgba(255,255,255,0.04);
+    font-family: serif;
+    line-height: 1;
+    pointer-events: none;
+  }
+
+  .hero-demo .hero-overline {
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 1rem;
+  }
+
+  .hero-demo h2 {
+    font-family: var(--font-serif);
+    font-size: 2.8rem;
+    font-weight: 400;
+    color: var(--white);
+    line-height: 1.1;
+    margin-bottom: 1rem;
+    max-width: 500px;
+  }
+
+  .hero-demo p {
+    color: var(--mist);
+    font-size: 1rem;
+    line-height: 1.7;
+    max-width: 460px;
+    margin-bottom: 2rem;
+  }
+
+  /* ─── Voice ──────────────────────────────────── */
+  .voice-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+  }
+
+  .voice-box {
+    padding: 1.25rem 1.5rem;
+    border-radius: var(--radius);
+    font-size: 0.9rem;
+  }
+
+  .voice-box.do {
+    background: var(--gold-soft);
+    border-left: 3px solid var(--gold);
+  }
+
+  .voice-box.dont {
+    background: #f5f5f5;
+    border-left: 3px solid var(--mist);
+    color: var(--stone);
+  }
+
+  .voice-box .voice-label {
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+    opacity: 0.6;
+  }
+
+  .voice-box.do .voice-label { color: var(--gold); }
+  .voice-box.dont .voice-label { color: var(--stone); }
+
+  /* ─── Spacing tokens ─────────────────────────── */
+  .spacing-row { display: flex; gap: 2rem; align-items: flex-end; flex-wrap: wrap; }
+
+  .spacing-item { text-align: center; }
+
+  .spacing-block {
+    background: var(--mist);
+    width: 32px;
+    margin: 0 auto 0.4rem;
+    border-radius: 2px;
+  }
+
+  .spacing-item span {
+    font-size: 0.7rem;
+    color: var(--stone);
+    display: block;
+    font-family: monospace;
+  }
+
+  @media (max-width: 600px) {
+    .voice-grid { grid-template-columns: 1fr; }
+    .brand-header { flex-direction: column; align-items: flex-start; }
+    .brand-header .meta { text-align: left; }
+    .hero-demo h2 { font-size: 2rem; }
+    .sample-h1 { font-size: 2.5rem; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- Header -->
+  <div class="brand-header">
+    <div class="logo-area">
+      <h1>Ima Juku</h1>
+      <p class="tagline">Aikido · Baarn &amp; Zeist</p>
+    </div>
+    <div class="meta">
+      Huisstijlgids v1.0<br>
+      Juni 2026<br>
+      imajuku.nl
+    </div>
+  </div>
+
+  <!-- Kleuren -->
+  <section>
+    <span class="label">01 — Kleurenpalet</span>
+    <div class="color-grid">
+      <div class="swatch">
+        <div class="swatch-block" style="background:#C42B1A"></div>
+        <div class="swatch-info">
+          <strong>Karmozijn</strong>
+          <span>#C42B1A — primair</span>
+        </div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-block" style="background:#D4820A"></div>
+        <div class="swatch-info">
+          <strong>Amber</strong>
+          <span>#D4820A — secondair</span>
+        </div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-block" style="background:#1C0E06"></div>
+        <div class="swatch-info">
+          <strong>Donkerbruin</strong>
+          <span>#1C0E06 — tekst/bg</span>
+        </div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-block" style="background:#3A1A0A"></div>
+        <div class="swatch-info">
+          <strong>Sumi</strong>
+          <span>#3A1A0A</span>
+        </div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-block" style="background:#7A5A45"></div>
+        <div class="swatch-info">
+          <strong>Stone</strong>
+          <span>#7A5A45</span>
+        </div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-block" style="background:#C9A882"></div>
+        <div class="swatch-info">
+          <strong>Zandgoud</strong>
+          <span>#C9A882</span>
+        </div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-block" style="background:#F8F0E3; border-bottom:1px solid #e5d9c8;"></div>
+        <div class="swatch-info">
+          <strong>Crème</strong>
+          <span>#F8F0E3</span>
+        </div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-block" style="background:#FDF8F2; border-bottom:1px solid #e5d9c8;"></div>
+        <div class="swatch-info">
+          <strong>Warm wit</strong>
+          <span>#FDF8F2</span>
+        </div>
+      </div>
+    </div>
+
+    <hr class="divider">
+
+    <p style="font-size:0.875rem; color:var(--stone); max-width:60ch; line-height:1.7;">
+      <strong style="color:var(--ink)">Gebruik:</strong> Karmozijn als primaire accentkleur — CTA-knoppen, labels, highlights. Amber/goud als warme tweede kleur — iconen, hover-states, decoratieve accenten. Donkerbruin vervangt zwart voor tekst en donkere achtergronden — warmer en passend bij het logo. Crème en warm wit als pagina-achtergrond. Stone en Zandgoud voor bijschriften en randen.
+    </p>
+  </section>
+
+  <!-- Typografie -->
+  <section>
+    <span class="label">02 — Typografie</span>
+
+    <div class="type-sample">
+      <div class="sample-overline">Overline / Label</div>
+      <div class="type-meta">Inter 600 · 0.72rem · tracking 0.14em · uppercase</div>
+    </div>
+
+    <div class="type-sample">
+      <div class="sample-h1">Aikido is de weg van harmonie</div>
+      <div class="type-meta">DM Serif Display Regular · 3.5rem · H1 paginatitel</div>
+    </div>
+
+    <div class="type-sample">
+      <div class="sample-h2">Wat is Ima Juku?</div>
+      <div class="type-meta">DM Serif Display Regular · 2.2rem · H2 sectietitel</div>
+    </div>
+
+    <div class="type-sample">
+      <div class="sample-h3"><em>Elke training is een begin</em></div>
+      <div class="type-meta">DM Serif Display Italic · 1.4rem · H3 citaat / subtitel</div>
+    </div>
+
+    <div class="type-sample">
+      <div class="sample-body">Aikido is een Japanse krijgskunst die zich richt op verbinding en controle — niet op kracht of conflict. Bij Ima Juku leer je bewegen vanuit rust, aandacht en techniek. Beginners zijn altijd welkom.</div>
+      <div class="type-meta">Inter Regular · 1rem · line-height 1.7 · bodytekst</div>
+    </div>
+
+    <div class="type-sample">
+      <div class="sample-small">Maandagavond 19:45 – 21:15 · Sporthal Zeist-Noord</div>
+      <div class="type-meta">Inter Regular · 0.85rem · bijschrift / metadata</div>
+    </div>
+  </section>
+
+  <!-- Knoppen -->
+  <section>
+    <span class="label">03 — Knoppen</span>
+    <div class="btn-row">
+      <a class="btn btn-primary">Proefles aanvragen</a>
+      <a class="btn btn-secondary">Meer over aikido</a>
+      <a class="btn btn-ghost">Trainingstijden</a>
+    </div>
+    <p style="font-size:0.8rem; color:var(--stone); margin-top:1.25rem; line-height:1.6;">
+      Primaire knop (vermiljoen) — één per pagina-sectie, voor de hoofdactie. Secundaire knop (outline) — voor navigatieacties. Ghost — voor minder urgente links.
+    </p>
+  </section>
+
+  <!-- Navigatie demo -->
+  <section>
+    <span class="label">04 — Navigatie (voorbeeld)</span>
+    <nav class="nav-demo">
+      <span class="nav-logo">Ima Juku</span>
+      <ul class="nav-links">
+        <li><a href="#">Over</a></li>
+        <li><a href="#">Leraar</a></li>
+        <li><a href="#">Trainingen</a></li>
+        <li><a href="#">Contact</a></li>
+      </ul>
+      <a class="nav-cta" href="#">Proefles aanvragen</a>
+    </nav>
+    <p style="font-size:0.8rem; color:var(--stone); margin-top:1rem; line-height:1.6;">
+      Donkere header (Ink) met lichte navigatielinks (Mist). De CTA-knop springt eruit in Vermiljoen. Op mobiel: hamburger menu, CTA blijft zichtbaar.
+    </p>
+  </section>
+
+  <!-- Hero demo -->
+  <section>
+    <span class="label">05 — Hero-sectie (voorbeeld)</span>
+    <div class="hero-demo">
+      <div class="hero-overline">Aikido · Baarn &amp; Zeist</div>
+      <h2>Beweeg vanuit rust.<br>Leer van binnenuit.</h2>
+      <p>Ima Juku is een open aikidodojo voor volwassenen. Geen wedstrijdsport — wél diepgang, techniek en gemeenschap.</p>
+      <a class="btn btn-primary">Vraag een proefles aan</a>
+    </div>
+    <p style="font-size:0.8rem; color:var(--stone); margin-top:1rem; line-height:1.6;">
+      今塾 (Ima Juku in kanji) als decoratief achtergrondelement — subtiel, niet leidend. Heldhoofd in DM Serif Display, subkopij in Inter Regular, bodytekst in Mist op Ink achtergrond.
+    </p>
+  </section>
+
+  <!-- Kaartcomponent -->
+  <section>
+    <span class="label">06 — Kaartcomponent (voorbeeld)</span>
+    <div class="card-demo">
+      <div class="card-label">Trainingen</div>
+      <h3>Maandag in Zeist</h3>
+      <p>Sporthal Zeist-Noord<br>19:45 – 21:15 uur<br>Vrij natrainen tot 21:30</p>
+      <a class="btn btn-secondary" style="font-size:0.8rem; padding:0.6rem 1.4rem;">Bekijk locatie</a>
+    </div>
+    <p style="font-size:0.8rem; color:var(--stone); margin-top:1rem; line-height:1.6;">
+      Paper (#F5F3EE) als kaartachtergrond op White pagina — subtiel dieptegevoel zonder zware shadows. Accent in Vermiljoen, tekst in Sumi/Stone.
+    </p>
+  </section>
+
+  <!-- Spacing -->
+  <section>
+    <span class="label">07 — Witruimte</span>
+    <div class="spacing-row">
+      <div class="spacing-item">
+        <div class="spacing-block" style="height:4px"></div>
+        <span>4px</span>
+      </div>
+      <div class="spacing-item">
+        <div class="spacing-block" style="height:8px"></div>
+        <span>8px</span>
+      </div>
+      <div class="spacing-item">
+        <div class="spacing-block" style="height:16px"></div>
+        <span>16px</span>
+      </div>
+      <div class="spacing-item">
+        <div class="spacing-block" style="height:24px"></div>
+        <span>24px</span>
+      </div>
+      <div class="spacing-item">
+        <div class="spacing-block" style="height:32px"></div>
+        <span>32px</span>
+      </div>
+      <div class="spacing-item">
+        <div class="spacing-block" style="height:48px"></div>
+        <span>48px</span>
+      </div>
+      <div class="spacing-item">
+        <div class="spacing-block" style="height:64px"></div>
+        <span>64px</span>
+      </div>
+      <div class="spacing-item">
+        <div class="spacing-block" style="height:96px"></div>
+        <span>96px</span>
+      </div>
+    </div>
+    <p style="font-size:0.8rem; color:var(--stone); margin-top:1.5rem; line-height:1.6;">
+      Gebaseerd op een 8px-grid. Gebruik ruime sectie-spacing (64–96px) — de site ademt rust en ruimte. Krappe spacing past niet bij de sfeer van aikido.
+    </p>
+  </section>
+
+  <!-- Toon & stem -->
+  <section>
+    <span class="label">08 — Toon &amp; tekst</span>
+    <div class="voice-grid">
+      <div class="voice-box do">
+        <div class="voice-label">✓ Wel zo</div>
+        "Aikido is geen sport voor iedereen — en dat is prima. Voor wie rust en techniek zoekt, is het ongeëvenaard."
+      </div>
+      <div class="voice-box dont">
+        <div class="voice-label">✗ Niet zo</div>
+        "Schrijf je nu in voor onze geweldige lessen! Wij leren jou de coolste moves!"
+      </div>
+      <div class="voice-box do">
+        <div class="voice-label">✓ Wel zo</div>
+        "Kom een avond kijken en meedoen. Geen verplichtingen — wel een eerlijke indruk."
+      </div>
+      <div class="voice-box dont">
+        <div class="voice-label">✗ Niet zo</div>
+        "Onze community is super open en welkom! Iedereen kan beginnen!"
+      </div>
+    </div>
+    <p style="font-size:0.875rem; color:var(--stone); max-width:60ch; line-height:1.7; margin-top:1.5rem;">
+      <strong style="color:var(--ink)">Karakter:</strong> rustig, direct, inhoudelijk. Geen hype, geen uitroeptekens. Schrijf als iemand die zijn vak kent en niet hoeft te verkopen — de kunst spreekt voor zich.
+    </p>
+  </section>
+
+  <!-- Logo richtlijnen -->
+  <section>
+    <span class="label">09 — Naam &amp; logo</span>
+    <div style="display:flex; gap:2rem; flex-wrap:wrap; align-items:center; margin-bottom:1.5rem;">
+      <div style="background:var(--sumi); padding:2rem 3rem; border-radius:var(--radius); text-align:center;">
+        <div style="font-family:var(--font-serif); font-size:2rem; color:var(--white); font-weight:400; letter-spacing:-0.01em;">Ima Juku</div>
+        <div style="font-size:0.65rem; color:var(--gold); letter-spacing:0.12em; text-transform:uppercase; margin-top:0.4rem;">Aikido</div>
+      </div>
+      <div style="background:var(--paper); padding:2rem 3rem; border-radius:var(--radius); text-align:center; border:1px solid var(--mist);">
+        <div style="font-family:var(--font-serif); font-size:2rem; color:var(--ink); font-weight:400; letter-spacing:-0.01em;">Ima Juku</div>
+        <div style="font-size:0.65rem; color:var(--stone); letter-spacing:0.12em; text-transform:uppercase; margin-top:0.4rem;">Aikido</div>
+      </div>
+    </div>
+    <p style="font-size:0.875rem; color:var(--stone); max-width:60ch; line-height:1.7;">
+      Voorlopig wordmark in DM Serif Display. Subtitel "Aikido" als overline-label eronder. Minimale marge rondom de naam — nooit smaller dan de lettergrootte aan elke zijde. Geen effecten, geen schaduw.
+    </p>
+  </section>
+
+</div>
+</body>
+</html>

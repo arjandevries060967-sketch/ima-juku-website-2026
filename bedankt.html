@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aanmelding ontvangen — Ima Juku Aikido</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --ink:#1C0E06; --sumi:#3A1A0A; --stone:#7A5A45; --mist:#C9A882;
+    --paper:#F8F0E3; --white:#FDF8F2; --red:#C42B1A; --gold:#D4820A;
+    --font-serif:'DM Serif Display', Georgia, serif;
+    --font-sans:'Inter', system-ui, sans-serif;
+    --radius:4px;
+  }
+  body {
+    font-family: var(--font-sans);
+    background: var(--white);
+    color: var(--ink);
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Nav */
+  .site-nav { background: var(--sumi); border-bottom: 1px solid rgba(201,168,130,0.15); }
+  .nav-inner {
+    max-width: 1120px; margin: 0 auto; padding: 0 2rem;
+    display: flex; align-items: center; height: 64px; gap: 0.65rem;
+  }
+  .nav-logo {
+    font-family: var(--font-serif); font-size: 1.25rem; color: var(--white);
+    text-decoration: none; display: flex; align-items: center; gap: 0.65rem;
+  }
+  .nav-logo img { width: 34px; height: 34px; border-radius: 50%; opacity: 0.9; }
+  .nav-logo span {
+    display: block; font-family: var(--font-sans); font-size: 0.58rem;
+    font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--gold); margin-top: 1px;
+  }
+
+  /* Main */
+  main {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4rem 2rem;
+  }
+
+  .bedankt-card {
+    max-width: 520px;
+    width: 100%;
+    text-align: center;
+  }
+
+  .bedankt-logo {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    opacity: 0.55;
+    margin: 0 auto 2rem;
+    display: block;
+  }
+
+  .overline {
+    font-size: 0.72rem; font-weight: 600; letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--gold); display: block;
+    margin-bottom: 1rem;
+  }
+
+  h1 {
+    font-family: var(--font-serif);
+    font-size: clamp(2rem, 4vw, 2.75rem);
+    font-weight: 400;
+    line-height: 1.15;
+    margin-bottom: 1.25rem;
+  }
+
+  p {
+    font-size: 0.975rem;
+    color: var(--stone);
+    line-height: 1.8;
+    margin-bottom: 2rem;
+  }
+
+  .al-aangemeld { display: none; }
+
+  .btn {
+    display: inline-block;
+    font-family: var(--font-sans);
+    font-size: 0.875rem;
+    font-weight: 500;
+    padding: 0.75rem 1.75rem;
+    border-radius: var(--radius);
+    text-decoration: none;
+    background: transparent;
+    color: var(--ink);
+    border: 1.5px solid rgba(122,90,69,0.4);
+    transition: border-color 0.15s;
+  }
+  .btn:hover { border-color: var(--ink); }
+
+  /* Footer */
+  .site-footer {
+    background: var(--sumi); padding: 1.5rem 2rem; text-align: center;
+  }
+  .site-footer p { font-size: 0.78rem; color: rgba(201,168,130,0.4); }
+  .site-footer a { color: rgba(201,168,130,0.4); text-decoration: none; }
+</style>
+</head>
+<body>
+
+<header class="site-nav">
+  <div class="nav-inner">
+    <a href="/" class="nav-logo">
+      <img src="logo ima juku.png" alt="Ima Juku logo">
+      <div>Ima Juku<span>Aikido</span></div>
+    </a>
+  </div>
+</header>
+
+<main>
+  <div class="bedankt-card">
+    <img src="logo ima juku.png" alt="" class="bedankt-logo" aria-hidden="true">
+
+    <span class="overline" id="overline-tekst">Aanmelding ontvangen</span>
+
+    <h1 id="hoofd-tekst">We nemen<br>snel contact op</h1>
+
+    <p id="body-tekst">
+      Je aanmelding voor een proefles is binnengekomen. We bevestigen de datum per e-mail, meestal binnen een dag.
+    </p>
+
+    <p class="al-aangemeld" id="al-tekst">
+      Dit e-mailadres staat al in ons systeem. Heb je je al eerder aangemeld? Neem dan contact op via <a href="mailto:info@imajuku.nl" style="color:var(--red)">info@imajuku.nl</a>.
+    </p>
+
+    <a href="/" class="btn">Terug naar de homepage</a>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <p><a href="/">Ima Juku</a> · Aikido in Baarn &amp; Zeist</p>
+</footer>
+
+<script>
+  if (new URLSearchParams(location.search).get('al') === '1') {
+    document.getElementById('overline-tekst').textContent = 'Al aangemeld';
+    document.getElementById('hoofd-tekst').textContent = 'Je staat al in ons systeem';
+    document.getElementById('body-tekst').style.display = 'none';
+    document.getElementById('al-tekst').style.display = 'block';
+  }
+</script>
+
+</body>
+</html>

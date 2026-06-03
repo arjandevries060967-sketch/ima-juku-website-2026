@@ -389,6 +389,21 @@
     text-decoration: none;
   }
 
+  /* ─── Foutmelding ────────────────────────── */
+  .fout-banner {
+    display: none;
+    background: #f5deda;
+    border-left: 3px solid var(--red);
+    border-radius: 0 var(--radius) var(--radius) 0;
+    padding: 1rem 1.25rem;
+    font-size: 0.875rem;
+    color: var(--ink);
+    line-height: 1.6;
+    margin-bottom: 2rem;
+  }
+
+  .fout-banner.zichtbaar { display: block; }
+
   /* ─── Responsive ──────────────────────────── */
   @media (max-width: 600px) {
     .form-row.two-col { grid-template-columns: 1fr; }
@@ -428,9 +443,13 @@
 <main class="form-page">
   <form
     method="post"
-    action="https://ima-juku-aikido.email-provider.eu/memberforms/subscribe/standalone/form/?a=nkeb37clp0&l=2fueysjced"
+    action="/api/proefles"
     novalidate
   >
+    <div class="fout-banner" id="fout-banner">
+      Er is iets misgegaan bij het versturen. Probeer het opnieuw, of stuur een e-mail naar <a href="mailto:info@imajuku.nl" style="color:var(--red)">info@imajuku.nl</a>.
+    </div>
+
     <!-- Honeypot (Laposta bot-bescherming, verborgen houden) -->
     <input type="text" name="hi-nkeb37clp0-2fueysjced" style="display:none" tabindex="-1" autocomplete="off">
     <input type="hidden" name="submit-duration" id="submit-duration" value="">
@@ -573,6 +592,11 @@
 </footer>
 
 <script>
+  // Toon foutbanner als URL ?fout parameter heeft
+  if (new URLSearchParams(location.search).get('fout')) {
+    document.getElementById('fout-banner').classList.add('zichtbaar');
+  }
+
   // Vul submit-duration in zodat Laposta botsubmissions kan detecteren
   const startTime = Date.now();
   window.addEventListener('submit', () => {

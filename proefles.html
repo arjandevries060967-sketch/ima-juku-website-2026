@@ -599,10 +599,22 @@
 
   // Vul submit-duration in zodat Laposta botsubmissions kan detecteren
   const startTime = Date.now();
-  window.addEventListener('submit', () => {
+
+  // Valideer: minstens één locatie moet aangevinkt zijn
+  document.querySelector('form').addEventListener('submit', function(e) {
+    const locatieChecked = document.querySelectorAll('input[name="Y8OEFhf1ac[]"]:checked').length > 0;
+    if (!locatieChecked) {
+      e.preventDefault();
+      const groep = document.querySelector('.checkbox-group.inline');
+      groep.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      groep.style.outline = '2px solid var(--red)';
+      groep.style.borderRadius = '4px';
+      setTimeout(() => { groep.style.outline = ''; }, 3000);
+      return;
+    }
     const dur = Math.round((Date.now() - startTime) / 1000);
     document.getElementById('submit-duration').value = dur;
-  }, true);
+  });
 </script>
 
 </body>

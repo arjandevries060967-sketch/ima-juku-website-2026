@@ -44,9 +44,7 @@ function buildPayload({ listId, email, ip, sourceUrl, customFields }) {
     `source_url=${enc(sourceUrl)}`,
   ];
   for (const [key, val] of Object.entries(customFields)) {
-    if (val !== '') {
-      parts.push(`custom_fields[${key}]=${enc(val)}`);
-    }
+    parts.push(`custom_fields[${key}]=${enc(val)}`);
   }
   return parts.join('&');
 }

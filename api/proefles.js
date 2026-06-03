@@ -44,7 +44,14 @@ function buildPayload({ listId, email, ip, sourceUrl, customFields }) {
     `source_url=${enc(sourceUrl)}`,
   ];
   for (const [key, val] of Object.entries(customFields)) {
-    parts.push(`custom_fields[${key}]=${enc(val)}`);
+    if (Array.isArray(val)) {
+      // Checkbox/multi-select: stuur als custom_fields[key][]=waarde
+      for (const v of val) {
+        parts.push(`custom_fields[${key}][]=${enc(v)}`);
+      }
+    } else {
+      parts.push(`custom_fields[${key}]=${enc(val)}`);
+    }
   }
   return parts.join('&');
 }
@@ -62,9 +69,10 @@ module.exports = async function handler(req, res) {
     console.log('PARSED:', JSON.stringify(d));
 
     const locatieRaw = d['Y8OEFhf1ac[]'];
-    const locaties   = Array.isArray(locatieRaw)
-      ? locatieRaw.join(', ')
-      : locatieRaw || '';
+    // Altijd als array, ook bij één keuze — Laposta checkbox-veld vereist array-notatie
+    const locaties = Array.isArray(locatieRaw)
+      ? locatieRaw
+      : locatieRaw ? [locatieRaw] : [];
 
     const apiKey = process.env.LAPOSTA_API_KEY;
     if (!apiKey) {

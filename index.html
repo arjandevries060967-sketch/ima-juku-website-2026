@@ -121,6 +121,17 @@
     text-decoration: none;
     white-space: nowrap;
     flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+  }
+
+  .nav-logo img {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    opacity: 0.9;
   }
 
   .nav-logo span {
@@ -222,18 +233,17 @@
     overflow: hidden;
   }
 
-  .hero::before {
-    content: '今塾';
+  .hero-watermark {
     position: absolute;
-    right: 5%;
+    right: 4%;
     top: 50%;
     transform: translateY(-50%);
-    font-size: clamp(10rem, 20vw, 20rem);
-    color: rgba(255,255,255,0.03);
-    font-family: serif;
-    line-height: 1;
+    width: clamp(240px, 30vw, 380px);
+    height: clamp(240px, 30vw, 380px);
+    opacity: 0.07;
     pointer-events: none;
     user-select: none;
+    border-radius: 50%;
   }
 
   .hero-content {
@@ -588,6 +598,15 @@
     margin-bottom: 2rem;
   }
 
+  .footer-logo-mark {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    opacity: 0.45;
+    display: block;
+    margin-bottom: 1rem;
+  }
+
   .footer-brand .logo {
     font-family: var(--font-serif);
     font-size: 1.4rem;
@@ -682,8 +701,8 @@
   <div class="container">
     <nav class="nav-inner">
       <a href="/" class="nav-logo">
-        Ima Juku
-        <span>Aikido</span>
+        <img src="logo ima juku.png" alt="Ima Juku logo">
+        <div>Ima Juku<span>Aikido</span></div>
       </a>
       <ul class="nav-links">
         <li><a href="/over">Over aikido</a></li>
@@ -713,6 +732,7 @@
 
 <!-- ─── HERO ──────────────────────────────────────── -->
 <section class="hero">
+  <img src="logo ima juku.png" alt="" class="hero-watermark" aria-hidden="true">
   <div class="container">
     <div class="hero-content">
       <span class="overline">Aikido · Baarn &amp; Zeist</span>
@@ -893,6 +913,7 @@
   <div class="container">
     <div class="footer-inner">
       <div class="footer-brand">
+        <img src="logo ima juku.png" alt="" class="footer-logo-mark" aria-hidden="true">
         <span class="logo">Ima Juku</span>
         <span class="sub">Aikido · Baarn &amp; Zeist</span>
         <p>Een open dojo voor volwassenen die aikido serieus willen beoefenen. Directe lijn vanuit de Japanse traditie.</p>

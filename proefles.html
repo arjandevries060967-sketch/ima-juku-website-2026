@@ -61,6 +61,17 @@
     font-size: 1.25rem;
     color: var(--white);
     text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+  }
+
+  .nav-logo img {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    opacity: 0.9;
+    flex-shrink: 0;
   }
 
   .nav-logo span {
@@ -100,17 +111,16 @@
     overflow: hidden;
   }
 
-  .page-header::before {
-    content: '今塾';
+  .page-header-watermark {
     position: absolute;
     right: 5%;
     top: 50%;
     transform: translateY(-50%);
-    font-size: clamp(8rem, 15vw, 16rem);
-    color: rgba(255,255,255,0.03);
-    font-family: serif;
-    line-height: 1;
+    width: clamp(180px, 22vw, 280px);
+    height: clamp(180px, 22vw, 280px);
+    opacity: 0.06;
     pointer-events: none;
+    border-radius: 50%;
   }
 
   .page-header .overline {
@@ -394,8 +404,8 @@
 <header class="site-nav">
   <div class="nav-inner">
     <a href="/" class="nav-logo">
-      Ima Juku
-      <span>Aikido</span>
+      <img src="logo ima juku.png" alt="Ima Juku logo">
+      <div>Ima Juku<span>Aikido</span></div>
     </a>
     <ul class="nav-links">
       <li><a href="/over">Over aikido</a></li>
@@ -408,6 +418,7 @@
 
 <!-- PAGE HEADER -->
 <div class="page-header">
+  <img src="logo ima juku.png" alt="" class="page-header-watermark" aria-hidden="true">
   <span class="overline">Gratis en vrijblijvend</span>
   <h1>Vraag een proefles aan</h1>
   <p>Kom een avond kijken en meedoen. Geen verplichtingen — wel een eerlijke indruk van wat aikido bij Ima Juku is.</p>
@@ -557,6 +568,7 @@
 
 <!-- FOOTER -->
 <footer class="site-footer">
+  <img src="logo ima juku.png" alt="" style="width:44px;height:44px;border-radius:50%;opacity:0.35;display:block;margin:0 auto 0.75rem;" aria-hidden="true">
   <p><a href="/">Ima Juku</a> · Aikido in Baarn &amp; Zeist · <a href="/privacy">Privacy</a></p>
 </footer>
 

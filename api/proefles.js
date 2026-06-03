@@ -40,6 +40,10 @@ module.exports = async function handler(req, res) {
     const locaties = Array.isArray(locatieRaw) ? locatieRaw.join(', ') : locatieRaw || '';
 
     const apiKey = process.env.LAPOSTA_API_KEY;
+    if (!apiKey) {
+      console.error('LAPOSTA_API_KEY is niet ingesteld');
+      return res.redirect(302, '/proefles?fout=config');
+    }
 
     const payload = new URLSearchParams({
       list_id:                         LIST_ID,
@@ -59,7 +63,7 @@ module.exports = async function handler(req, res) {
       'fields[opmerking]':             d['kjrtQYYCLh']  || '',
     });
 
-    const authHeader = 'Basic ' + Buffer.from((apiKey || '') + ':').toString('base64');
+    const authHeader = 'Basic ' + Buffer.from(apiKey + ':').toString('base64');
 
     const lapostaRes = await fetch(LAPOSTA_API, {
       method: 'POST',
@@ -72,21 +76,20 @@ module.exports = async function handler(req, res) {
 
     const result = await lapostaRes.json().catch(() => ({}));
 
-    // ── DEBUG: toon alles als JSON ──────────────────────────────
-    // Verwijder dit blok zodra het formulier werkt
-    res.setHeader('Content-Type', 'application/json');
-    return res.status(200).json({
-      debug: true,
-      laposta_status: lapostaRes.status,
-      laposta_response: result,
-      api_key_set: !!apiKey,
-      email_received: d['PI6DA7TLP7'] || '(leeg)',
-      payload_sent: payload.toString(),
-    });
-    // ── EINDE DEBUG ────────────────────────────────────────────
+    if (lapostaRes.ok) {
+      return res.redirect(302, '/bedankt');
+    }
+
+    // E-mailadres bestaat al in de lijst (Laposta error code 204)
+    if (result?.error?.code === 204) {
+      return res.redirect(302, '/bedankt?al=1');
+    }
+
+    console.error('Laposta fout:', lapostaRes.status, JSON.stringify(result));
+    return res.redirect(302, '/proefles?fout=1');
 
   } catch (err) {
-    res.setHeader('Content-Type', 'application/json');
-    return res.status(500).json({ error: err.message, stack: err.stack });
+    console.error('Onverwachte fout:', err);
+    return res.redirect(302, '/proefles?fout=1');
   }
 };

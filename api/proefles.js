@@ -16,7 +16,6 @@ function parseBody(req) {
         const params = new URLSearchParams(data);
         const obj = {};
         for (const [key, value] of params.entries()) {
-          // Meervoudige waarden (checkboxes met [] naam) samenvoegen als array
           if (key in obj) {
             obj[key] = Array.isArray(obj[key])
               ? [...obj[key], value]
@@ -54,25 +53,26 @@ module.exports = async function handler(req, res) {
       return res.redirect(302, '/proefles?fout=config');
     }
 
+    // Laposta API gebruikt de custom_name als veldnaam, niet de field_id
     const payload = new URLSearchParams({
-      list_id:                  LIST_ID,
-      email:                    d['PI6DA7TLP7']  || '',
-      ip:                       (req.headers['x-forwarded-for'] || '').split(',')[0].trim()
-                                || req.socket?.remoteAddress
-                                || '',
-      source_url:               'https://imajuku.nl/proefles',
+      list_id:                        LIST_ID,
+      email:                          d['PI6DA7TLP7']  || '',
+      ip:                             (req.headers['x-forwarded-for'] || '').split(',')[0].trim()
+                                      || req.socket?.remoteAddress
+                                      || '',
+      source_url:                     'https://imajuku.nl/proefles',
 
-      'fields[VCQticEHHg]':     d['VCQticEHHg']  || '',   // Voornaam
-      'fields[FEqqKfvEJN]':     d['FEqqKfvEJN']  || '',   // Achternaam
-      'fields[WEiUDNfM7O]':     d['WEiUDNfM7O']  || '',   // Leeftijd
-      'fields[rmF5mwHbQm]':     d['rmF5mwHbQm']  || '',   // Geslacht
-      'fields[wQHcc605z4]':     d['wQHcc605z4']  || '',   // Student
-      'fields[zZH7Jm1GrV]':     d['zZH7Jm1GrV']  || '',   // Telefoonnummer
-      'fields[Y8OEFhf1ac]':     locaties,                  // Locatie(s)
-      'fields[PcvLnGah3B]':     d['PcvLnGah3B']  || '',   // Proefles 1 datum
-      'fields[FevVlZuZWq]':     d['FevVlZuZWq']  || '',   // Proefles 2 datum
-      'fields[f9g5G3RavQ]':     d['f9g5G3RavQ']  || '',   // Motivatie
-      'fields[kjrtQYYCLh]':     d['kjrtQYYCLh']  || '',   // Opmerking
+      'fields[voornaam]':             d['VCQticEHHg']  || '',
+      'fields[achternaam]':           d['FEqqKfvEJN']  || '',
+      'fields[leeftijd]':             d['WEiUDNfM7O']  || '',
+      'fields[geslacht]':             d['rmF5mwHbQm']  || '',
+      'fields[ikbenstudent]':         d['wQHcc605z4']  || '',
+      'fields[telefoonnumer]':        d['zZH7Jm1GrV']  || '',   // Let op: typo in Laposta ("numer")
+      'fields[locatie]':              locaties,
+      'fields[proefles1datum]':       d['PcvLnGah3B']  || '',
+      'fields[proefles2datum]':       d['FevVlZuZWq']  || '',
+      'fields[motivatiewaaromaikido]':d['f9g5G3RavQ']  || '',
+      'fields[opmerking]':            d['kjrtQYYCLh']  || '',
     });
 
     const authHeader = 'Basic ' + Buffer.from(apiKey + ':').toString('base64');

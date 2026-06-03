@@ -35,7 +35,7 @@ function parseBody(req) {
 function buildPayload(base, fields) {
   const basePart = new URLSearchParams(base).toString();
   const fieldPart = Object.entries(fields)
-    .map(([key, val]) => `fields[${key}]=${encodeURIComponent(val)}`)
+    .map(([key, val]) => `custom_fields[${key}]=${encodeURIComponent(val)}`)
     .join('&');
   return basePart + '&' + fieldPart;
 }

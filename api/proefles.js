@@ -58,7 +58,8 @@ module.exports = async function handler(req, res) {
     const raw = await readBody(req);
     const d   = parseBody(raw);
 
-    console.log('Form data keys:', Object.keys(d));
+    console.log('RAW BODY:', raw);
+    console.log('PARSED:', JSON.stringify(d));
 
     const locatieRaw = d['Y8OEFhf1ac[]'];
     const locaties   = Array.isArray(locatieRaw)

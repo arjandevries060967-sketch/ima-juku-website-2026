@@ -400,9 +400,25 @@
 
   .locatie-card {
     background: var(--white);
-    border-radius: var(--radius);
-    padding: 2rem 2rem 2rem;
-    border: 1px solid rgba(201,168,130,0.3);
+    border-radius: 8px;
+    padding: 0;
+    border: 1px solid rgba(201,168,130,0.25);
+    box-shadow: 0 2px 12px rgba(28,14,6,0.07), 0 1px 3px rgba(28,14,6,0.05);
+    overflow: hidden;
+    transition: transform 0.18s ease, box-shadow 0.18s ease;
+  }
+
+  .locatie-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 28px rgba(28,14,6,0.12), 0 2px 6px rgba(28,14,6,0.07);
+  }
+
+  .card-header {
+    background: var(--sumi);
+    padding: 1.25rem 2rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
   }
 
   .locatie-card .card-tag {
@@ -410,9 +426,12 @@
     font-weight: 600;
     letter-spacing: 0.12em;
     text-transform: uppercase;
-    color: var(--red);
-    margin-bottom: 0.75rem;
+    color: var(--gold);
     display: block;
+  }
+
+  .card-body {
+    padding: 1.75rem 2rem 2rem;
   }
 
   .locatie-card h3 {
@@ -421,6 +440,7 @@
     font-weight: 400;
     margin-bottom: 1.25rem;
     line-height: 1.2;
+    color: var(--white);
   }
 
   .schedule-list {
@@ -799,44 +819,56 @@
 
     <div class="locaties-grid">
       <div class="locatie-card">
-        <span class="card-tag">Baarn</span>
-        <h3>Gymzaal De Driesprong</h3>
-        <ul class="schedule-list">
-          <li>
-            <span class="schedule-day">Donderdag</span>
-            <span class="schedule-time">19:45 – 21:30</span>
-          </li>
-        </ul>
-        <p class="locatie-meta">
-          Begoniastraat 4, Baarn<br>
-          Zaal open vanaf 19:15
-        </p>
-        <div class="locatie-map">
-          <iframe
-            src="https://maps.google.com/maps?q=Begoniastraat+4,+Baarn&output=embed&z=15"
-            width="100%" height="180" style="border:0;" allowfullscreen="" loading="lazy"
-            referrerpolicy="no-referrer-when-downgrade" title="Locatie Baarn"></iframe>
+        <div class="card-header">
+          <div>
+            <span class="card-tag">Baarn</span>
+            <h3>Gymzaal De Driesprong</h3>
+          </div>
+        </div>
+        <div class="card-body">
+          <ul class="schedule-list">
+            <li>
+              <span class="schedule-day">Donderdag</span>
+              <span class="schedule-time">19:45 – 21:30</span>
+            </li>
+          </ul>
+          <p class="locatie-meta">
+            Begoniastraat 4, Baarn<br>
+            Zaal open vanaf 19:15
+          </p>
+          <div class="locatie-map">
+            <iframe
+              src="https://maps.google.com/maps?q=Begoniastraat+4,+Baarn&output=embed&z=15"
+              width="100%" height="180" style="border:0;" allowfullscreen="" loading="lazy"
+              referrerpolicy="no-referrer-when-downgrade" title="Locatie Baarn"></iframe>
+          </div>
         </div>
       </div>
 
       <div class="locatie-card">
-        <span class="card-tag">Zeist</span>
-        <h3>Gymzaal Noordweg</h3>
-        <ul class="schedule-list">
-          <li>
-            <span class="schedule-day">Maandag</span>
-            <span class="schedule-time">19:45 – 21:30</span>
-          </li>
-        </ul>
-        <p class="locatie-meta">
-          Noordweg 10, Zeist<br>
-          Zaal open vanaf 19:15
-        </p>
-        <div class="locatie-map">
-          <iframe
-            src="https://maps.google.com/maps?q=Noordweg+10,+Zeist&output=embed&z=15"
-            width="100%" height="180" style="border:0;" allowfullscreen="" loading="lazy"
-            referrerpolicy="no-referrer-when-downgrade" title="Locatie Zeist"></iframe>
+        <div class="card-header">
+          <div>
+            <span class="card-tag">Zeist</span>
+            <h3>Gymzaal Noordweg</h3>
+          </div>
+        </div>
+        <div class="card-body">
+          <ul class="schedule-list">
+            <li>
+              <span class="schedule-day">Maandag</span>
+              <span class="schedule-time">19:45 – 21:30</span>
+            </li>
+          </ul>
+          <p class="locatie-meta">
+            Noordweg 10, Zeist<br>
+            Zaal open vanaf 19:15
+          </p>
+          <div class="locatie-map">
+            <iframe
+              src="https://maps.google.com/maps?q=Noordweg+10,+Zeist&output=embed&z=15"
+              width="100%" height="180" style="border:0;" allowfullscreen="" loading="lazy"
+              referrerpolicy="no-referrer-when-downgrade" title="Locatie Zeist"></iframe>
+          </div>
         </div>
       </div>
 

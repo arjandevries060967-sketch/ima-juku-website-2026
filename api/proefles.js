@@ -93,6 +93,11 @@ function formatDateNl(value) {
   }).format(date);
 }
 
+function todayUtcDateOnly() {
+  const now = new Date();
+  return new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()));
+}
+
 function getAllowedWeekdays(locaties) {
   const allowed = new Set();
   if (locaties.some(locatie => locatie.toLowerCase().includes('zeist'))) allowed.add(1);
@@ -108,12 +113,15 @@ function analyseTrialDates({ locaties, dates }) {
   return dates.map(({ label, value }) => {
     const date = parseDateValue(value);
     const weekday = date ? date.getUTCDay() : null;
+    const isPast = date ? date < todayUtcDateOnly() : false;
+    const validWeekday = weekday !== null && activeAllowed.has(weekday);
     return {
       label,
       value,
       formatted: formatDateNl(value),
       weekdayName: weekday === null ? 'onbekend' : WEEKDAYS[weekday],
-      valid: weekday !== null && activeAllowed.has(weekday),
+      invalidReason: isPast ? 'past' : validWeekday ? null : 'weekday',
+      valid: !isPast && validWeekday,
     };
   });
 }
@@ -140,7 +148,7 @@ function buildTrialMail({ data, locaties, dateAnalysis }) {
     .join('\n');
 
   const warningText = hasInvalidDates
-    ? `\nLet op: ${invalidDates.map(item => `je hebt ${item.weekdayName} ${item.formatted} gekozen`).join(' en ')}. Dat is niet goed, want je kunt alleen op maandag in Zeist of donderdag in Baarn een proefles volgen.\n\nKies daarom alvast een maandag of donderdag die jou past. We nemen persoonlijk contact met je op om de proefles definitief af te stemmen.\n`
+    ? `\nLet op: ${invalidDates.map(item => item.invalidReason === 'past' ? `je hebt ${item.formatted} gekozen, maar die datum ligt in het verleden` : `je hebt ${item.weekdayName} ${item.formatted} gekozen`).join(' en ')}. Kies alvast een nieuwe datum: een proefles kan alleen op maandag in Zeist of donderdag in Baarn.\n\nWe nemen persoonlijk contact met je op om de proefles definitief af te stemmen.\n`
     : '\nJe gekozen data vallen op een mogelijke trainingsavond. We nemen persoonlijk contact met je op om de datum definitief te bevestigen.\n';
 
   const text = `Beste ${firstName},
@@ -161,7 +169,7 @@ Ima Juku Aikido`;
     <p>Beste ${escapeHtml(firstName)},</p>
     <p>Dank je wel voor je aanvraag voor een proefles bij Ima Juku.</p>
     ${hasInvalidDates
-      ? `<p><strong>Let op:</strong> ${escapeHtml(invalidDates.map(item => `je hebt ${item.weekdayName} ${item.formatted} gekozen`).join(' en '))}. Dat is niet goed, want je kunt alleen op maandag in Zeist of donderdag in Baarn een proefles volgen.</p><p>Kies daarom alvast een maandag of donderdag die jou past. We nemen persoonlijk contact met je op om de proefles definitief af te stemmen.</p>`
+      ? `<p><strong>Let op:</strong> ${escapeHtml(invalidDates.map(item => item.invalidReason === 'past' ? `je hebt ${item.formatted} gekozen, maar die datum ligt in het verleden` : `je hebt ${item.weekdayName} ${item.formatted} gekozen`).join(' en '))}. Kies alvast een nieuwe datum: een proefles kan alleen op maandag in Zeist of donderdag in Baarn.</p><p>We nemen persoonlijk contact met je op om de proefles definitief af te stemmen.</p>`
       : '<p>Je gekozen data vallen op een mogelijke trainingsavond. We nemen persoonlijk contact met je op om de datum definitief te bevestigen.</p>'
     }
     <p><strong>Je aanvraag:</strong></p>

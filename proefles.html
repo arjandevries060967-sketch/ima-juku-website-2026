@@ -646,6 +646,11 @@
     }).format(datum);
   }
 
+  function vandaagAlsDatum() {
+    const nu = new Date();
+    return new Date(nu.getFullYear(), nu.getMonth(), nu.getDate());
+  }
+
   function updateDatumWaarschuwingen() {
     const dagen = toegestaneDagen();
     document.querySelectorAll('input[type="date"]').forEach(input => {
@@ -655,8 +660,13 @@
         return;
       }
       const [jaar, maand, dag] = input.value.split('-').map(Number);
-      const datum = new Date(Date.UTC(jaar, maand - 1, dag));
-      const dagVanWeek = datum.getUTCDay();
+      const datum = new Date(jaar, maand - 1, dag);
+      if (datum < vandaagAlsDatum()) {
+        warning.textContent = `Let op: ${formatDatum(input.value)} ligt in het verleden. Kies een toekomstige maandag in Zeist of donderdag in Baarn.`;
+        warning.classList.add('zichtbaar');
+        return;
+      }
+      const dagVanWeek = datum.getDay();
       if (dagen.has(dagVanWeek)) {
         warning.classList.remove('zichtbaar');
         return;

@@ -387,6 +387,24 @@
     line-height: 1.6;
   }
 
+  .whatsapp-support {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    color: var(--sumi);
+    font-size: 0.875rem;
+    font-weight: 500;
+    margin-top: 1.1rem;
+    text-decoration: none;
+    border-bottom: 1px solid rgba(196,43,26,0.35);
+    transition: color 0.15s, border-color 0.15s;
+  }
+
+  .whatsapp-support:hover {
+    color: var(--red);
+    border-color: var(--red);
+  }
+
   /* ─── FOOTER ──────────────────────────────── */
   .site-footer {
     background: var(--sumi);
@@ -597,6 +615,7 @@
     <div class="form-submit">
       <button type="submit" class="btn-submit">Aanmelden voor proefles</button>
       <p class="submit-note">Je ontvangt een bevestigingsmail van Laposta. We nemen daarna persoonlijk contact op om de datum te bevestigen.</p>
+      <a class="whatsapp-support" href="https://wa.me/31643986593?text=Hallo%20Ima%20Juku%2C%20ik%20heb%20een%20vraag%20over%20een%20proefles." target="_blank" rel="noopener">Vraag stellen via WhatsApp</a>
     </div>
 
   </form>
@@ -605,7 +624,7 @@
 <!-- FOOTER -->
 <footer class="site-footer">
   <img src="logo ima juku.png" alt="" style="width:44px;height:44px;border-radius:50%;opacity:0.35;display:block;margin:0 auto 0.75rem;" aria-hidden="true">
-  <p><a href="/">Ima Juku</a> · Aikido in Baarn &amp; Zeist · <a href="cookiebeleid.html">Cookiebeleid</a></p>
+  <p><a href="/">Ima Juku</a> · Aikido in Baarn &amp; Zeist · <a href="https://wa.me/31643986593?text=Hallo%20Ima%20Juku%2C%20ik%20heb%20een%20vraag%20over%20een%20proefles." target="_blank" rel="noopener">WhatsApp</a> · <a href="cookiebeleid.html">Cookiebeleid</a></p>
 </footer>
 
 <script src="cookies.js" defer></script>

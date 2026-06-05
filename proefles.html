@@ -616,6 +616,10 @@
 
   // Vul submit-duration in zodat Laposta botsubmissions kan detecteren
   const startTime = Date.now();
+  const geslotenPeriodes = [
+    { naam: 'zomervakantie', start: '2026-07-17', einde: '2026-08-30' },
+    { naam: 'kerstvakantie', start: '2026-12-19', einde: '2027-01-03' },
+  ];
 
   function gekozenLocaties() {
     return Array.from(document.querySelectorAll('input[name="Y8OEFhf1ac[]"]:checked')).map(input => input.value);
@@ -651,6 +655,19 @@
     return new Date(nu.getFullYear(), nu.getMonth(), nu.getDate());
   }
 
+  function datumUitWaarde(value) {
+    const [jaar, maand, dag] = value.split('-').map(Number);
+    return new Date(jaar, maand - 1, dag);
+  }
+
+  function geslotenPeriodeVoorDatum(datum) {
+    return geslotenPeriodes.find(periode => {
+      const start = datumUitWaarde(periode.start);
+      const einde = datumUitWaarde(periode.einde);
+      return datum >= start && datum <= einde;
+    }) || null;
+  }
+
   function updateDatumWaarschuwingen() {
     const dagen = toegestaneDagen();
     document.querySelectorAll('input[type="date"]').forEach(input => {
@@ -659,10 +676,15 @@
         warning?.classList.remove('zichtbaar');
         return;
       }
-      const [jaar, maand, dag] = input.value.split('-').map(Number);
-      const datum = new Date(jaar, maand - 1, dag);
+      const datum = datumUitWaarde(input.value);
       if (datum < vandaagAlsDatum()) {
         warning.textContent = `Let op: ${formatDatum(input.value)} ligt in het verleden. Kies een toekomstige maandag in Zeist of donderdag in Baarn.`;
+        warning.classList.add('zichtbaar');
+        return;
+      }
+      const geslotenPeriode = geslotenPeriodeVoorDatum(datum);
+      if (geslotenPeriode) {
+        warning.textContent = `Let op: ${formatDatum(input.value)} valt in de ${geslotenPeriode.naam}. De dojo is dan gesloten voor proeflessen.`;
         warning.classList.add('zichtbaar');
         return;
       }

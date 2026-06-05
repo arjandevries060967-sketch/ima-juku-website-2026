@@ -20,6 +20,19 @@ const WEEKDAYS = [
   'zaterdag',
 ];
 
+const CLOSED_PERIODS = [
+  {
+    name: 'zomervakantie',
+    start: '2026-07-17',
+    end: '2026-08-30',
+  },
+  {
+    name: 'kerstvakantie',
+    start: '2026-12-19',
+    end: '2027-01-03',
+  },
+];
+
 // Lees raw POST-body als string
 function readBody(req) {
   return new Promise((resolve, reject) => {
@@ -98,6 +111,15 @@ function todayUtcDateOnly() {
   return new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()));
 }
 
+function getClosedPeriod(date) {
+  if (!date) return null;
+  return CLOSED_PERIODS.find(period => {
+    const start = parseDateValue(period.start);
+    const end = parseDateValue(period.end);
+    return start && end && date >= start && date <= end;
+  }) || null;
+}
+
 function getAllowedWeekdays(locaties) {
   const allowed = new Set();
   if (locaties.some(locatie => locatie.toLowerCase().includes('zeist'))) allowed.add(1);
@@ -114,14 +136,16 @@ function analyseTrialDates({ locaties, dates }) {
     const date = parseDateValue(value);
     const weekday = date ? date.getUTCDay() : null;
     const isPast = date ? date < todayUtcDateOnly() : false;
+    const closedPeriod = getClosedPeriod(date);
     const validWeekday = weekday !== null && activeAllowed.has(weekday);
     return {
       label,
       value,
       formatted: formatDateNl(value),
       weekdayName: weekday === null ? 'onbekend' : WEEKDAYS[weekday],
-      invalidReason: isPast ? 'past' : validWeekday ? null : 'weekday',
-      valid: !isPast && validWeekday,
+      closedPeriodName: closedPeriod?.name || null,
+      invalidReason: isPast ? 'past' : closedPeriod ? 'closed' : validWeekday ? null : 'weekday',
+      valid: !isPast && !closedPeriod && validWeekday,
     };
   });
 }
@@ -148,7 +172,11 @@ function buildTrialMail({ data, locaties, dateAnalysis }) {
     .join('\n');
 
   const warningText = hasInvalidDates
-    ? `\nLet op: ${invalidDates.map(item => item.invalidReason === 'past' ? `je hebt ${item.formatted} gekozen, maar die datum ligt in het verleden` : `je hebt ${item.weekdayName} ${item.formatted} gekozen`).join(' en ')}. Kies alvast een nieuwe datum: een proefles kan alleen op maandag in Zeist of donderdag in Baarn.\n\nWe nemen persoonlijk contact met je op om de proefles definitief af te stemmen.\n`
+    ? `\nLet op: ${invalidDates.map(item => {
+      if (item.invalidReason === 'past') return `je hebt ${item.formatted} gekozen, maar die datum ligt in het verleden`;
+      if (item.invalidReason === 'closed') return `je hebt ${item.formatted} gekozen, maar dan is de dojo gesloten vanwege de ${item.closedPeriodName}`;
+      return `je hebt ${item.weekdayName} ${item.formatted} gekozen`;
+    }).join(' en ')}. Kies alvast een nieuwe datum: een proefles kan alleen op maandag in Zeist of donderdag in Baarn, buiten de vakantieperiodes.\n\nWe nemen persoonlijk contact met je op om de proefles definitief af te stemmen.\n`
     : '\nJe gekozen data vallen op een mogelijke trainingsavond. We nemen persoonlijk contact met je op om de datum definitief te bevestigen.\n';
 
   const text = `Beste ${firstName},
@@ -169,7 +197,11 @@ Ima Juku Aikido`;
     <p>Beste ${escapeHtml(firstName)},</p>
     <p>Dank je wel voor je aanvraag voor een proefles bij Ima Juku.</p>
     ${hasInvalidDates
-      ? `<p><strong>Let op:</strong> ${escapeHtml(invalidDates.map(item => item.invalidReason === 'past' ? `je hebt ${item.formatted} gekozen, maar die datum ligt in het verleden` : `je hebt ${item.weekdayName} ${item.formatted} gekozen`).join(' en '))}. Kies alvast een nieuwe datum: een proefles kan alleen op maandag in Zeist of donderdag in Baarn.</p><p>We nemen persoonlijk contact met je op om de proefles definitief af te stemmen.</p>`
+      ? `<p><strong>Let op:</strong> ${escapeHtml(invalidDates.map(item => {
+        if (item.invalidReason === 'past') return `je hebt ${item.formatted} gekozen, maar die datum ligt in het verleden`;
+        if (item.invalidReason === 'closed') return `je hebt ${item.formatted} gekozen, maar dan is de dojo gesloten vanwege de ${item.closedPeriodName}`;
+        return `je hebt ${item.weekdayName} ${item.formatted} gekozen`;
+      }).join(' en '))}. Kies alvast een nieuwe datum: een proefles kan alleen op maandag in Zeist of donderdag in Baarn, buiten de vakantieperiodes.</p><p>We nemen persoonlijk contact met je op om de proefles definitief af te stemmen.</p>`
       : '<p>Je gekozen data vallen op een mogelijke trainingsavond. We nemen persoonlijk contact met je op om de datum definitief te bevestigen.</p>'
     }
     <p><strong>Je aanvraag:</strong></p>

@@ -696,6 +696,44 @@
     margin-bottom: 1rem;
   }
 
+  /* ─── CONTACT ───────────────────────────────────── */
+  .contact-section {
+    background: var(--paper);
+    padding: 4.5rem 0;
+  }
+
+  .contact-panel {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 2rem;
+    align-items: center;
+    border-top: 2px solid var(--mist);
+    padding-top: 2rem;
+  }
+
+  .contact-panel .overline { margin-bottom: 0.75rem; }
+
+  .contact-panel h2 {
+    font-family: var(--font-serif);
+    font-size: clamp(1.9rem, 3vw, 2.5rem);
+    font-weight: 400;
+    line-height: 1.15;
+    margin-bottom: 1rem;
+  }
+
+  .contact-panel p {
+    color: var(--sumi);
+    line-height: 1.75;
+    max-width: 620px;
+  }
+
+  .contact-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    justify-content: flex-end;
+  }
+
   /* ─── FOOTER ──────────────────────────────────── */
   .site-footer {
     background: var(--sumi);
@@ -797,6 +835,8 @@
     .intro-grid { grid-template-columns: 1fr; gap: 3rem; }
     .intro-visual { order: -1; }
     .dojo-sfeer-grid { grid-template-columns: 1fr; gap: 2rem; }
+    .contact-panel { grid-template-columns: 1fr; }
+    .contact-actions { justify-content: flex-start; }
 
     .footer-inner { grid-template-columns: 1fr; gap: 2rem; }
 
@@ -1040,8 +1080,25 @@
   </div>
 </section>
 
+<!-- ─── CONTACT ────────────────────────────────────── -->
+<section class="contact-section" id="contact">
+  <div class="container">
+    <div class="contact-panel">
+      <div>
+        <span class="overline">Andere vraag?</span>
+        <h2>Stuur ons gerust een bericht</h2>
+        <p>Heb je een vraag over trainingen, lidmaatschap, tarieven of iets anders dan een proeflesaanvraag? Mail ons of stuur een WhatsApp-bericht, dan reageren we persoonlijk.</p>
+      </div>
+      <div class="contact-actions">
+        <a href="mailto:info@imajuku.nl?subject=Vraag%20via%20de%20website" class="btn btn-outline-dark">Mail ons</a>
+        <a href="https://wa.me/31643986593?text=Hallo%20Ima%20Juku%2C%20ik%20heb%20een%20vraag." class="btn btn-primary" target="_blank" rel="noopener">WhatsApp sturen</a>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- ─── FOOTER ────────────────────────────────────── -->
-<footer class="site-footer" id="contact">
+<footer class="site-footer">
   <div class="container">
     <div class="footer-inner">
       <div class="footer-brand">

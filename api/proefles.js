@@ -249,7 +249,19 @@ async function buildTeacherDraftMail({ data, locaties, dateAnalysis }) {
   const invalidDates = dateAnalysis.filter(item => !item.valid);
   const hasInvalidDates = invalidDates.length > 0;
   const firstName = data['VCQticEHHg'] || 'daar';
-  const personalNote = await generatePersonalNote({ data, locaties, dateAnalysis });
+  let personalNote = '';
+  try {
+    personalNote = await generatePersonalNote({ data, locaties, dateAnalysis });
+  } catch (noteErr) {
+    console.error('AI-persoonlijke alinea mislukt, fallback gebruikt:', noteErr);
+    const opmerking = (data['kjrtQYYCLh'] || '').trim();
+    const isStudent = (data['wQHcc605z4'] || '').toLowerCase() === 'ja';
+    personalNote = [
+      opmerking ? `Ik lees bij je opmerking: "${opmerking}". We nemen dit mee wanneer we de proefles met je afstemmen.` : '',
+      isStudent ? 'Ik zie dat je hebt aangegeven dat je student bent. Voor studenten gelden aangepaste lesgelden; dat tarief is lager dan het reguliere tarief.' : '',
+      buildDateWarningText(dateAnalysis),
+    ].filter(Boolean).join('\n\n');
+  }
   const dateLines = dateAnalysis.map(item => item.formatted).join('\n');
   const dateHtml = dateAnalysis.map(item => `<li>${escapeHtml(item.formatted)}${item.valid ? '' : ' <strong>(controle nodig)</strong>'}</li>`).join('');
   const subject = `Concept proeflesreactie — ${data['VCQticEHHg'] || ''} ${data['FEqqKfvEJN'] || ''}`.trim();
@@ -475,6 +487,10 @@ async function createTeacherDraftSafely({ data, locaties, dateAnalysis, reason }
   try {
     const draftMail = await buildTeacherDraftMail({ data, locaties, dateAnalysis });
     const draft = await createGmailDraft({ to: data['PI6DA7TLP7'], mail: draftMail });
+    if (!draft) {
+      console.log('Gmail-concept proefles overgeslagen', JSON.stringify({ reason }));
+      return;
+    }
     console.log('Gmail-concept proefles aangemaakt', JSON.stringify({
       draftId: draft?.id || null,
       reason,
@@ -516,6 +532,7 @@ module.exports = async function handler(req, res) {
         { label: 'Proefles 2', value: d['FevVlZuZWq'] || '' },
       ],
     });
+    await createTeacherDraftSafely({ data: d, locaties, dateAnalysis, reason: 'form-submit' });
 
     const apiKey = process.env.LAPOSTA_API_KEY;
     if (!apiKey) {
@@ -558,13 +575,11 @@ module.exports = async function handler(req, res) {
     console.log('Laposta status:', lapostaRes.status, JSON.stringify(result));
 
     if (lapostaRes.ok) {
-      await createTeacherDraftSafely({ data: d, locaties, dateAnalysis, reason: 'laposta-ok' });
       return res.redirect(302, '/bedankt');
     }
 
     // E-mailadres staat al in de lijst
     if (isLapostaDuplicate(result)) {
-      await createTeacherDraftSafely({ data: d, locaties, dateAnalysis, reason: 'laposta-duplicate' });
       return res.redirect(302, '/bedankt?al=1');
     }
 

@@ -193,7 +193,7 @@ async function generatePersonalNote({ data, locaties, dateAnalysis }) {
   if (!process.env.OPENAI_API_KEY || (!motivatie && !opmerking && !invalidWarning && !studentNote)) {
     if (!motivatie && !opmerking && !invalidWarning && !studentNote) return '';
     return [
-      motivatie ? `Mooi om te lezen waarom je Aikido wilt proberen: "${motivatie}". We nemen dat mee in hoe we je ontvangen en begeleiden tijdens je proeflessen.` : '',
+      motivatie ? `Mooi om te lezen waarom je Aikido wilt proberen: "${motivatie}".` : '',
       opmerking ? `Ik lees ook je opmerking: "${opmerking}". Geef dit bij binnenkomst gerust nog even aan, dan kunnen we daar op de mat zorgvuldig rekening mee houden.` : '',
       studentNote,
       invalidWarning,
@@ -264,7 +264,7 @@ async function buildTeacherDraftMail({ data, locaties, dateAnalysis }) {
     const motivatie = (data['f9g5G3RavQ'] || '').trim();
     const isStudent = (data['wQHcc605z4'] || '').toLowerCase() === 'ja';
     personalNote = [
-      motivatie ? `Mooi om te lezen waarom je Aikido wilt proberen: "${motivatie}". We nemen dat mee in hoe we je ontvangen en begeleiden tijdens je proeflessen.` : '',
+      motivatie ? `Mooi om te lezen waarom je Aikido wilt proberen: "${motivatie}".` : '',
       opmerking ? `Ik lees ook je opmerking: "${opmerking}". Geef dit bij binnenkomst gerust nog even aan, dan kunnen we daar op de mat zorgvuldig rekening mee houden.` : '',
       isStudent ? 'Ik zie dat je hebt aangegeven dat je student bent. Voor studenten gelden aangepaste lesgelden; dat tarief is lager dan het reguliere tarief.' : '',
       buildDateWarningText(dateAnalysis),
@@ -299,13 +299,13 @@ Trainingsbroek (zonder ritsen) of legging en t-shirt zijn perfect!
 
 Training (19.45-21.30)
 
-Na omkleden terug de zaal in; zet je slippers bij de rand en kom zonder slippers of sokken op de mat.
-Er wordt kennisgemaakt. We groeten elkaar aan het begin.
-Je volgt het voorbeeld van de groep en krijgt begeleiding van een van de drie assistenten.
-Warming-up ongeveer 15 minuten: flexibiliteit en kernversterking. Geen conditie- of krachtoefeningen.
-Daarna technieken, meestal in tweetallen. Na elke oefening/uitleg wissel je van partner.
-21.00 uur: reguliere les klaar, gevolgd door 30 minuten vrij trainen.
-21.30 uur: we groeten af.
+- Na het omkleden kom je rustig terug de zaal in. Zet je slippers bij de rand en stap zonder slippers of sokken de mat op.
+- We nemen even de tijd om kennis te maken en groeten daarna samen aan het begin van de les.
+- Je hoeft nog niets te kunnen. Je kijkt mee met de groep en krijgt begeleiding van een van de assistenten.
+- De warming-up duurt ongeveer 15 minuten en is gericht op soepel bewegen, flexibiliteit en lichte kernversterking. We doen geen conditie- of zware krachtoefeningen.
+- Daarna oefenen we Aikido-technieken, meestal in tweetallen. Na elke uitleg wisselen we van partner, zodat je rustig met verschillende mensen kunt oefenen.
+- 21.00 uur: reguliere les klaar, gevolgd door 30 minuten vrij trainen.
+- 21.30 uur: we groeten af.
 
 Na afloop
 
@@ -365,11 +365,11 @@ Datumcontrole: ${hasInvalidDates ? buildDateWarningText(dateAnalysis) : 'geen bi
 
     <h3>Training (19.45-21.30)</h3>
     <ul>
-      <li>Na omkleden terug de zaal in; zet je slippers bij de rand en kom zonder slippers of sokken op de mat.</li>
-      <li>Er wordt kennisgemaakt. We groeten elkaar aan het begin.</li>
-      <li>Je volgt het voorbeeld van de groep en krijgt begeleiding van een van de drie assistenten.</li>
-      <li>Warming-up ongeveer 15 minuten: flexibiliteit en kernversterking. Geen conditie- of krachtoefeningen.</li>
-      <li>Daarna technieken, meestal in tweetallen. Na elke oefening/uitleg wissel je van partner.</li>
+      <li>Na het omkleden kom je rustig terug de zaal in. Zet je slippers bij de rand en stap zonder slippers of sokken de mat op.</li>
+      <li>We nemen even de tijd om kennis te maken en groeten daarna samen aan het begin van de les.</li>
+      <li>Je hoeft nog niets te kunnen. Je kijkt mee met de groep en krijgt begeleiding van een van de assistenten.</li>
+      <li>De warming-up duurt ongeveer 15 minuten en is gericht op soepel bewegen, flexibiliteit en lichte kernversterking. We doen geen conditie- of zware krachtoefeningen.</li>
+      <li>Daarna oefenen we Aikido-technieken, meestal in tweetallen. Na elke uitleg wisselen we van partner, zodat je rustig met verschillende mensen kunt oefenen.</li>
       <li>21.00 uur: reguliere les klaar, gevolgd door 30 minuten vrij trainen.</li>
       <li>21.30 uur: we groeten af.</li>
     </ul>

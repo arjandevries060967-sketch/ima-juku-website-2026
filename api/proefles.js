@@ -1,7 +1,7 @@
 /**
  * Vercel serverless function: proefles aanmelding → Laposta
  * Vereiste env var in Vercel: LAPOSTA_API_KEY
- * Optioneel voor automatische mail: RESEND_API_KEY, PROEFLES_MAIL_FROM, PROEFLES_NOTIFY_EMAIL
+ * Optioneel voor automatische mail: SMTP_USER, SMTP_PASS, PROEFLES_MAIL_FROM, PROEFLES_REPLY_TO, PROEFLES_NOTIFY_EMAIL
  *
  * Payload wordt volledig handmatig gebouwd met ongeëncodeerde blokhaken,
  * zoals Laposta vereist: custom_fields[voornaam]=Waarde
@@ -9,7 +9,6 @@
 
 const LIST_ID    = '2fueysjced';
 const LAPOSTA_API = 'https://api.laposta.nl/v2/member';
-const RESEND_API = 'https://api.resend.com/emails';
 
 const WEEKDAYS = [
   'zondag',
@@ -180,38 +179,37 @@ Ima Juku Aikido`;
 }
 
 async function sendTrialMail({ to, mail }) {
-  const apiKey = process.env.RESEND_API_KEY;
+  const user = process.env.SMTP_USER;
+  const pass = process.env.SMTP_PASS;
   const from = process.env.PROEFLES_MAIL_FROM;
-  if (!apiKey || !from || !to) {
-    console.log('Automatische proeflesmail overgeslagen: RESEND_API_KEY, PROEFLES_MAIL_FROM of ontvanger ontbreekt');
+  if (!user || !pass || !from || !to) {
+    console.log('Automatische proeflesmail overgeslagen: SMTP_USER, SMTP_PASS, PROEFLES_MAIL_FROM of ontvanger ontbreekt');
     return;
   }
 
-  const payload = {
+  const nodemailer = require('nodemailer');
+  const port = Number(process.env.SMTP_PORT || 465);
+  const transporter = nodemailer.createTransport({
+    host: process.env.SMTP_HOST || 'smtp.transip.email',
+    port,
+    secure: port === 465,
+    auth: { user, pass },
+  });
+
+  const message = {
     from,
     to,
+    replyTo: process.env.PROEFLES_REPLY_TO || 'info@imajuku.nl',
     subject: mail.subject,
     text: mail.text,
     html: mail.html,
   };
 
   if (process.env.PROEFLES_NOTIFY_EMAIL) {
-    payload.bcc = [process.env.PROEFLES_NOTIFY_EMAIL];
+    message.bcc = process.env.PROEFLES_NOTIFY_EMAIL;
   }
 
-  const response = await fetch(RESEND_API, {
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ${apiKey}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(payload),
-  });
-
-  if (!response.ok) {
-    const errorText = await response.text().catch(() => '');
-    throw new Error(`Resend mailfout ${response.status}: ${errorText}`);
-  }
+  await transporter.sendMail(message);
 }
 
 module.exports = async function handler(req, res) {

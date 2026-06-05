@@ -343,6 +343,20 @@
     color: var(--ink);
   }
 
+  .date-warning {
+    display: none;
+    background: #f5deda;
+    border-left: 3px solid var(--red);
+    border-radius: 0 var(--radius) var(--radius) 0;
+    color: var(--ink);
+    font-size: 0.8rem;
+    line-height: 1.55;
+    margin-top: 0.25rem;
+    padding: 0.7rem 0.85rem;
+  }
+
+  .date-warning.zichtbaar { display: block; }
+
   /* ─── Submit ──────────────────────────────── */
   .form-submit {
     margin-top: 2.5rem;
@@ -552,10 +566,12 @@
       <div class="form-field">
         <label for="PcvLnGah3B">Proefles 1 — datum <span class="req">*</span></label>
         <input type="date" id="PcvLnGah3B" name="PcvLnGah3B" required>
+        <span class="date-warning" data-date-warning-for="PcvLnGah3B"></span>
       </div>
       <div class="form-field">
         <label for="FevVlZuZWq">Proefles 2 — datum <span class="req">*</span></label>
         <input type="date" id="FevVlZuZWq" name="FevVlZuZWq" required>
+        <span class="date-warning" data-date-warning-for="FevVlZuZWq"></span>
       </div>
     </div>
 
@@ -601,6 +617,59 @@
   // Vul submit-duration in zodat Laposta botsubmissions kan detecteren
   const startTime = Date.now();
 
+  function gekozenLocaties() {
+    return Array.from(document.querySelectorAll('input[name="Y8OEFhf1ac[]"]:checked')).map(input => input.value);
+  }
+
+  function toegestaneDagen() {
+    const locaties = gekozenLocaties();
+    const dagen = new Set();
+    if (locaties.some(locatie => locatie.includes('Zeist'))) dagen.add(1);
+    if (locaties.some(locatie => locatie.includes('Baarn'))) dagen.add(4);
+    if (!dagen.size) {
+      dagen.add(1);
+      dagen.add(4);
+    }
+    return dagen;
+  }
+
+  function formatDatum(value) {
+    if (!value) return '';
+    const [jaar, maand, dag] = value.split('-').map(Number);
+    const datum = new Date(Date.UTC(jaar, maand - 1, dag));
+    return new Intl.DateTimeFormat('nl-NL', {
+      weekday: 'long',
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric',
+      timeZone: 'UTC',
+    }).format(datum);
+  }
+
+  function updateDatumWaarschuwingen() {
+    const dagen = toegestaneDagen();
+    document.querySelectorAll('input[type="date"]').forEach(input => {
+      const warning = document.querySelector(`[data-date-warning-for="${input.id}"]`);
+      if (!warning || !input.value) {
+        warning?.classList.remove('zichtbaar');
+        return;
+      }
+      const [jaar, maand, dag] = input.value.split('-').map(Number);
+      const datum = new Date(Date.UTC(jaar, maand - 1, dag));
+      const dagVanWeek = datum.getUTCDay();
+      if (dagen.has(dagVanWeek)) {
+        warning.classList.remove('zichtbaar');
+        return;
+      }
+      warning.textContent = `Let op: ${formatDatum(input.value)} past niet bij de proeflesavonden. Je kunt een proefles volgen op maandag in Zeist of donderdag in Baarn.`;
+      warning.classList.add('zichtbaar');
+    });
+  }
+
+  document.querySelectorAll('input[name="Y8OEFhf1ac[]"], input[type="date"]').forEach(input => {
+    input.addEventListener('change', updateDatumWaarschuwingen);
+  });
+
   // Valideer: minstens één locatie moet aangevinkt zijn
   document.querySelector('form').addEventListener('submit', function(e) {
     const locatieChecked = document.querySelectorAll('input[name="Y8OEFhf1ac[]"]:checked').length > 0;
@@ -613,6 +682,7 @@
       setTimeout(() => { groep.style.outline = ''; }, 3000);
       return;
     }
+    updateDatumWaarschuwingen();
     const dur = Math.round((Date.now() - startTime) / 1000);
     document.getElementById('submit-duration').value = dur;
   });

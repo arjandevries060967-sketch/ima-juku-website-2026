@@ -1,6 +1,7 @@
 /**
  * Vercel serverless function: proefles aanmelding → Laposta
  * Vereiste env var in Vercel: LAPOSTA_API_KEY
+ * Optioneel voor automatische mail: RESEND_API_KEY, PROEFLES_MAIL_FROM, PROEFLES_NOTIFY_EMAIL
  *
  * Payload wordt volledig handmatig gebouwd met ongeëncodeerde blokhaken,
  * zoals Laposta vereist: custom_fields[voornaam]=Waarde
@@ -8,6 +9,17 @@
 
 const LIST_ID    = '2fueysjced';
 const LAPOSTA_API = 'https://api.laposta.nl/v2/member';
+const RESEND_API = 'https://api.resend.com/emails';
+
+const WEEKDAYS = [
+  'zondag',
+  'maandag',
+  'dinsdag',
+  'woensdag',
+  'donderdag',
+  'vrijdag',
+  'zaterdag',
+];
 
 // Lees raw POST-body als string
 function readBody(req) {
@@ -56,6 +68,152 @@ function buildPayload({ listId, email, ip, sourceUrl, customFields }) {
   return parts.join('&');
 }
 
+function parseDateValue(value) {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(value || '')) return null;
+  const [year, month, day] = value.split('-').map(Number);
+  const date = new Date(Date.UTC(year, month - 1, day));
+  if (
+    date.getUTCFullYear() !== year ||
+    date.getUTCMonth() !== month - 1 ||
+    date.getUTCDate() !== day
+  ) {
+    return null;
+  }
+  return date;
+}
+
+function formatDateNl(value) {
+  const date = parseDateValue(value);
+  if (!date) return value || 'geen datum';
+  return new Intl.DateTimeFormat('nl-NL', {
+    weekday: 'long',
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+    timeZone: 'UTC',
+  }).format(date);
+}
+
+function getAllowedWeekdays(locaties) {
+  const allowed = new Set();
+  if (locaties.some(locatie => locatie.toLowerCase().includes('zeist'))) allowed.add(1);
+  if (locaties.some(locatie => locatie.toLowerCase().includes('baarn'))) allowed.add(4);
+  return allowed;
+}
+
+function analyseTrialDates({ locaties, dates }) {
+  const allowedWeekdays = getAllowedWeekdays(locaties);
+  const fallbackAllowed = new Set([1, 4]);
+  const activeAllowed = allowedWeekdays.size ? allowedWeekdays : fallbackAllowed;
+
+  return dates.map(({ label, value }) => {
+    const date = parseDateValue(value);
+    const weekday = date ? date.getUTCDay() : null;
+    return {
+      label,
+      value,
+      formatted: formatDateNl(value),
+      weekdayName: weekday === null ? 'onbekend' : WEEKDAYS[weekday],
+      valid: weekday !== null && activeAllowed.has(weekday),
+    };
+  });
+}
+
+function escapeHtml(value) {
+  return String(value || '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
+
+function buildTrialMail({ data, locaties, dateAnalysis }) {
+  const invalidDates = dateAnalysis.filter(item => !item.valid);
+  const hasInvalidDates = invalidDates.length > 0;
+  const firstName = data['VCQticEHHg'] || 'daar';
+  const subject = hasInvalidDates
+    ? 'Je proeflesaanvraag bij Ima Juku: let op je gekozen datum'
+    : 'Je proeflesaanvraag bij Ima Juku is ontvangen';
+
+  const dateLines = dateAnalysis
+    .map(item => `- ${item.label}: ${item.formatted}${item.valid ? '' : ' (niet mogelijk)'}`)
+    .join('\n');
+
+  const warningText = hasInvalidDates
+    ? `\nLet op: ${invalidDates.map(item => `je hebt ${item.weekdayName} ${item.formatted} gekozen`).join(' en ')}. Dat is niet goed, want je kunt alleen op maandag in Zeist of donderdag in Baarn een proefles volgen.\n\nKies daarom alvast een maandag of donderdag die jou past. We nemen persoonlijk contact met je op om de proefles definitief af te stemmen.\n`
+    : '\nJe gekozen data vallen op een mogelijke trainingsavond. We nemen persoonlijk contact met je op om de datum definitief te bevestigen.\n';
+
+  const text = `Beste ${firstName},
+
+Dank je wel voor je aanvraag voor een proefles bij Ima Juku.
+${warningText}
+Je aanvraag:
+Naam: ${data['VCQticEHHg'] || ''} ${data['FEqqKfvEJN'] || ''}
+E-mail: ${data['PI6DA7TLP7'] || ''}
+Telefoon: ${data['zZH7Jm1GrV'] || ''}
+Locatievoorkeur: ${locaties.join(', ') || 'niet opgegeven'}
+${dateLines}
+
+Hartelijke groet,
+Ima Juku Aikido`;
+
+  const html = `
+    <p>Beste ${escapeHtml(firstName)},</p>
+    <p>Dank je wel voor je aanvraag voor een proefles bij Ima Juku.</p>
+    ${hasInvalidDates
+      ? `<p><strong>Let op:</strong> ${escapeHtml(invalidDates.map(item => `je hebt ${item.weekdayName} ${item.formatted} gekozen`).join(' en '))}. Dat is niet goed, want je kunt alleen op maandag in Zeist of donderdag in Baarn een proefles volgen.</p><p>Kies daarom alvast een maandag of donderdag die jou past. We nemen persoonlijk contact met je op om de proefles definitief af te stemmen.</p>`
+      : '<p>Je gekozen data vallen op een mogelijke trainingsavond. We nemen persoonlijk contact met je op om de datum definitief te bevestigen.</p>'
+    }
+    <p><strong>Je aanvraag:</strong></p>
+    <ul>
+      <li>Naam: ${escapeHtml(`${data['VCQticEHHg'] || ''} ${data['FEqqKfvEJN'] || ''}`.trim())}</li>
+      <li>E-mail: ${escapeHtml(data['PI6DA7TLP7'])}</li>
+      <li>Telefoon: ${escapeHtml(data['zZH7Jm1GrV'])}</li>
+      <li>Locatievoorkeur: ${escapeHtml(locaties.join(', ') || 'niet opgegeven')}</li>
+      ${dateAnalysis.map(item => `<li>${escapeHtml(item.label)}: ${escapeHtml(item.formatted)}${item.valid ? '' : ' <strong>(niet mogelijk)</strong>'}</li>`).join('')}
+    </ul>
+    <p>Hartelijke groet,<br>Ima Juku Aikido</p>
+  `;
+
+  return { subject, text, html, hasInvalidDates };
+}
+
+async function sendTrialMail({ to, mail }) {
+  const apiKey = process.env.RESEND_API_KEY;
+  const from = process.env.PROEFLES_MAIL_FROM;
+  if (!apiKey || !from || !to) {
+    console.log('Automatische proeflesmail overgeslagen: RESEND_API_KEY, PROEFLES_MAIL_FROM of ontvanger ontbreekt');
+    return;
+  }
+
+  const payload = {
+    from,
+    to,
+    subject: mail.subject,
+    text: mail.text,
+    html: mail.html,
+  };
+
+  if (process.env.PROEFLES_NOTIFY_EMAIL) {
+    payload.bcc = [process.env.PROEFLES_NOTIFY_EMAIL];
+  }
+
+  const response = await fetch(RESEND_API, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${apiKey}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(payload),
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text().catch(() => '');
+    throw new Error(`Resend mailfout ${response.status}: ${errorText}`);
+  }
+}
+
 module.exports = async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).send('Method not allowed');
@@ -71,6 +229,13 @@ module.exports = async function handler(req, res) {
     const locaties = Array.isArray(locatieRaw)
       ? locatieRaw
       : locatieRaw ? [locatieRaw] : [];
+    const dateAnalysis = analyseTrialDates({
+      locaties,
+      dates: [
+        { label: 'Proefles 1', value: d['PcvLnGah3B'] || '' },
+        { label: 'Proefles 2', value: d['FevVlZuZWq'] || '' },
+      ],
+    });
 
     const apiKey = process.env.LAPOSTA_API_KEY;
     if (!apiKey) {
@@ -113,6 +278,15 @@ module.exports = async function handler(req, res) {
     console.log('Laposta status:', lapostaRes.status, JSON.stringify(result));
 
     if (lapostaRes.ok) {
+      const mail = buildTrialMail({ data: d, locaties, dateAnalysis });
+      try {
+        await sendTrialMail({ to: d['PI6DA7TLP7'], mail });
+        console.log('Automatische proeflesmail verstuurd', JSON.stringify({
+          hasInvalidDates: mail.hasInvalidDates,
+        }));
+      } catch (mailErr) {
+        console.error('Automatische proeflesmail mislukt:', mailErr);
+      }
       return res.redirect(302, '/bedankt');
     }
 

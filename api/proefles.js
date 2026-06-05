@@ -184,15 +184,17 @@ function buildDateLines(dateAnalysis) {
 
 async function generatePersonalNote({ data, locaties, dateAnalysis }) {
   const opmerking = (data['kjrtQYYCLh'] || '').trim();
+  const motivatie = (data['f9g5G3RavQ'] || '').trim();
   const isStudent = (data['wQHcc605z4'] || '').toLowerCase() === 'ja';
   const invalidWarning = buildDateWarningText(dateAnalysis);
   const studentNote = isStudent
     ? 'Ik zie dat je hebt aangegeven dat je student bent. Voor studenten gelden aangepaste lesgelden; dat tarief is lager dan het reguliere tarief.'
     : '';
-  if (!process.env.OPENAI_API_KEY || (!opmerking && !invalidWarning && !studentNote)) {
-    if (!opmerking && !invalidWarning && !studentNote) return '';
+  if (!process.env.OPENAI_API_KEY || (!motivatie && !opmerking && !invalidWarning && !studentNote)) {
+    if (!motivatie && !opmerking && !invalidWarning && !studentNote) return '';
     return [
-      opmerking ? `Ik lees bij je opmerking: "${opmerking}". We nemen dit mee wanneer we de proefles met je afstemmen.` : '',
+      motivatie ? `Mooi om te lezen waarom je Aikido wilt proberen: "${motivatie}". We nemen dat mee in hoe we je ontvangen en begeleiden tijdens je proeflessen.` : '',
+      opmerking ? `Ik lees ook je opmerking: "${opmerking}". Geef dit bij binnenkomst gerust nog even aan, dan kunnen we daar op de mat zorgvuldig rekening mee houden.` : '',
       studentNote,
       invalidWarning,
     ].filter(Boolean).join('\n\n');
@@ -208,16 +210,20 @@ Context:
 ${buildDateLines(dateAnalysis)}
 - Datumwaarschuwing: ${invalidWarning || 'geen'}
 - Student: ${isStudent ? 'ja' : 'nee of niet opgegeven'}
+- Waarom wil iemand Aikido doen: ${motivatie || 'geen'}
 - Opmerking van aanvrager: ${opmerking || 'geen'}
 
 Regels:
 - Schrijf in het Nederlands.
-- Spreek de aanvrager persoonlijk en rustig aan.
+- Spreek de aanvrager persoonlijk, rustig en natuurlijk aan alsof Arjan zelf reageert.
+- Als er een motivatie staat bij "Waarom wil je Aikido doen?": schrijf daar een persoonlijke zin over die laat merken dat de motivatie echt gelezen is. Herhaal niet letterlijk te veel woorden.
+- Als er een opmerking staat: reageer daar warm en concreet op. Maak het niet zakelijk; het mag voelen als een persoonlijke uitnodiging.
 - Geef geen medische diagnose of medisch advies.
 - Als er een blessure of gezondheidsopmerking staat: erken dat voorzichtig, zeg dat we daar op de mat rekening mee kunnen houden, dat iemand binnen eigen grenzen traint, en dat overleg met arts/fysiotherapeut verstandig is bij twijfel.
 - Als er een datumwaarschuwing is: noem die helder en vraag om een nieuwe passende datum.
 - Als de aanvrager student is: noem dat er aangepaste lesgelden voor studenten gelden en dat dit goedkoper is dan het reguliere tarief. Noem geen bedrag.
-- Maximaal 120 woorden.
+- Schrijf maximaal twee korte alinea's.
+- Maximaal 150 woorden.
 `.trim();
 
   const response = await fetch('https://api.openai.com/v1/responses', {
@@ -255,9 +261,11 @@ async function buildTeacherDraftMail({ data, locaties, dateAnalysis }) {
   } catch (noteErr) {
     console.error('AI-persoonlijke alinea mislukt, fallback gebruikt:', noteErr);
     const opmerking = (data['kjrtQYYCLh'] || '').trim();
+    const motivatie = (data['f9g5G3RavQ'] || '').trim();
     const isStudent = (data['wQHcc605z4'] || '').toLowerCase() === 'ja';
     personalNote = [
-      opmerking ? `Ik lees bij je opmerking: "${opmerking}". We nemen dit mee wanneer we de proefles met je afstemmen.` : '',
+      motivatie ? `Mooi om te lezen waarom je Aikido wilt proberen: "${motivatie}". We nemen dat mee in hoe we je ontvangen en begeleiden tijdens je proeflessen.` : '',
+      opmerking ? `Ik lees ook je opmerking: "${opmerking}". Geef dit bij binnenkomst gerust nog even aan, dan kunnen we daar op de mat zorgvuldig rekening mee houden.` : '',
       isStudent ? 'Ik zie dat je hebt aangegeven dat je student bent. Voor studenten gelden aangepaste lesgelden; dat tarief is lager dan het reguliere tarief.' : '',
       buildDateWarningText(dateAnalysis),
     ].filter(Boolean).join('\n\n');
@@ -266,6 +274,7 @@ async function buildTeacherDraftMail({ data, locaties, dateAnalysis }) {
   const dateHtml = dateAnalysis.map(item => `<li>${escapeHtml(item.formatted)}${item.valid ? '' : ' <strong>(controle nodig)</strong>'}</li>`).join('');
   const subject = `Concept proeflesreactie — ${data['VCQticEHHg'] || ''} ${data['FEqqKfvEJN'] || ''}`.trim();
   const opmerking = (data['kjrtQYYCLh'] || '').trim();
+  const motivatie = (data['f9g5G3RavQ'] || '').trim();
 
   const text = `Beste ${firstName},
 
@@ -329,6 +338,7 @@ E-mail: ${data['PI6DA7TLP7'] || ''}
 Telefoon: ${data['zZH7Jm1GrV'] || ''}
 Locatievoorkeur: ${locaties.join(', ') || 'niet opgegeven'}
 Student: ${data['wQHcc605z4'] || 'niet opgegeven'}
+Waarom Aikido: ${motivatie || 'geen'}
 Opmerking: ${opmerking || 'geen'}
 Datumcontrole: ${hasInvalidDates ? buildDateWarningText(dateAnalysis) : 'geen bijzonderheden'}`;
 
@@ -381,6 +391,7 @@ Datumcontrole: ${hasInvalidDates ? buildDateWarningText(dateAnalysis) : 'geen bi
     Telefoon: ${escapeHtml(data['zZH7Jm1GrV'])}<br>
     Locatievoorkeur: ${escapeHtml(locaties.join(', ') || 'niet opgegeven')}<br>
     Student: ${escapeHtml(data['wQHcc605z4'] || 'niet opgegeven')}<br>
+    Waarom Aikido: ${escapeHtml(motivatie || 'geen')}<br>
     Opmerking: ${escapeHtml(opmerking || 'geen')}<br>
     Datumcontrole: ${escapeHtml(hasInvalidDates ? buildDateWarningText(dateAnalysis) : 'geen bijzonderheden')}</p>
   `;

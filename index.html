@@ -313,6 +313,38 @@
 
   .intro-text p + p { margin-top: 1rem; }
 
+  .name-meaning {
+    align-items: center;
+    background: var(--paper);
+    border-left: 3px solid var(--gold);
+    border-radius: 0 var(--radius) var(--radius) 0;
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: 92px minmax(0, 1fr);
+    margin: 1.75rem 0 0;
+    padding: 1rem 1.1rem;
+  }
+
+  .name-meaning img {
+    background: var(--ink);
+    border-radius: 4px;
+    display: block;
+    height: 72px;
+    object-fit: cover;
+    width: 92px;
+  }
+
+  .name-meaning p {
+    font-size: 0.9rem;
+    line-height: 1.65;
+    margin: 0;
+  }
+
+  .name-meaning strong {
+    color: var(--ink);
+    font-weight: 600;
+  }
+
   .intro-text a {
     display: inline-block;
     margin-top: 1.75rem;
@@ -926,6 +958,10 @@
         <p>Ben je op zoek naar een manier om fysiek en mentaal sterker te worden? Bij Ima Juku train je in een veilige en respectvolle omgeving aan jezelf: je conditie, je focus en je weerbaarheid.</p>
         <p>Of je nu beginner bent of al ervaring hebt, je bent welkom om mee te doen. Kom langs voor een proefles en ervaar zelf hoe Aikido je helpt om stevig en ontspannen in het leven te staan.</p>
         <p style="margin-top: 1.5rem; font-weight: 500; color: var(--ink);">Train mee, ontwikkel jezelf, ontdek Aikido!</p>
+        <div class="name-meaning">
+          <img src="afbeeldingen/Logo/ima.gif" alt="Kanji voor Ima">
+          <p><strong>Ima Juku</strong> spreek je uit als <strong>iemaa djoekoe</strong>. <strong>Ima</strong> betekent <strong>nu</strong>: we leven in het nu, en we trainen in het nu.</p>
+        </div>
         <a href="/proefles.html" class="btn btn-outline-dark" style="margin-top: 1rem;">Proefles aanvragen</a>
       </div>
       <div class="intro-visual">

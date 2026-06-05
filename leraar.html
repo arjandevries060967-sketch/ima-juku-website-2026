@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Arjan de Vries — Hoofdleraar Ima Juku Aikido</title>
+<meta name="description" content="Lees meer over Arjan de Vries, hoofdleraar en oprichter van Ima Juku Aikido in Baarn en Zeist.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="cookies.css">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --ink:       #1C0E06;
+    --sumi:      #3A1A0A;
+    --stone:     #7A5A45;
+    --mist:      #C9A882;
+    --paper:     #F8F0E3;
+    --white:     #FDF8F2;
+    --red:       #C42B1A;
+    --red-hover: #A82415;
+    --gold:      #D4820A;
+    --border:    rgba(201,168,130,0.35);
+    --font-serif:'DM Serif Display', Georgia, serif;
+    --font-sans: 'Inter', system-ui, sans-serif;
+    --radius:    4px;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: var(--font-sans);
+    background: var(--white);
+    color: var(--ink);
+    font-size: 16px;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  a { color: inherit; }
+
+  .container {
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: 0 2rem;
+  }
+
+  .site-nav {
+    background: var(--sumi);
+    border-bottom: 1px solid rgba(201,168,130,0.15);
+  }
+
+  .nav-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 64px;
+    gap: 2rem;
+  }
+
+  .nav-logo {
+    font-family: var(--font-serif);
+    font-size: 1.25rem;
+    color: var(--white);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+  }
+
+  .nav-logo img {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    opacity: 0.9;
+    flex-shrink: 0;
+  }
+
+  .nav-logo span {
+    display: block;
+    font-family: var(--font-sans);
+    font-size: 0.58rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-top: 1px;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 0.25rem;
+    list-style: none;
+  }
+
+  .nav-links a {
+    font-size: 0.82rem;
+    color: var(--mist);
+    text-decoration: none;
+    padding: 0.4rem 0.8rem;
+    border-radius: var(--radius);
+    transition: color 0.15s;
+  }
+
+  .nav-links a:hover { color: var(--white); }
+
+  .btn {
+    display: inline-block;
+    font-family: var(--font-sans);
+    font-size: 0.875rem;
+    font-weight: 500;
+    letter-spacing: 0.03em;
+    padding: 0.8rem 1.9rem;
+    border-radius: var(--radius);
+    text-decoration: none;
+    transition: background 0.15s, color 0.15s, border-color 0.15s;
+  }
+
+  .btn-primary {
+    background: var(--red);
+    color: #fff;
+  }
+
+  .btn-primary:hover { background: var(--red-hover); }
+
+  .btn-outline-dark {
+    background: transparent;
+    color: var(--ink);
+    border: 1.5px solid var(--ink);
+  }
+
+  .btn-outline-dark:hover {
+    background: var(--ink);
+    color: var(--white);
+  }
+
+  .overline {
+    display: block;
+    color: var(--gold);
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  .teacher-hero {
+    background: radial-gradient(ellipse at 70% 50%, #3A1A0A 0%, #1C0E06 60%);
+    color: var(--white);
+    padding: 5rem 0;
+  }
+
+  .teacher-hero-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 360px;
+    gap: 4rem;
+    align-items: center;
+  }
+
+  .teacher-hero .overline { margin-bottom: 1.1rem; }
+
+  .teacher-hero h1 {
+    font-family: var(--font-serif);
+    font-size: clamp(2.5rem, 5vw, 4.25rem);
+    font-weight: 400;
+    line-height: 1;
+    margin-bottom: 1.25rem;
+  }
+
+  .teacher-hero p {
+    color: var(--mist);
+    max-width: 620px;
+    line-height: 1.8;
+    margin-bottom: 2rem;
+  }
+
+  .teacher-photo {
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid rgba(201,168,130,0.25);
+    box-shadow: 0 24px 52px rgba(0,0,0,0.22);
+  }
+
+  .teacher-photo img {
+    display: block;
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+  }
+
+  .teacher-content {
+    padding: 5rem 0;
+  }
+
+  .content-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 320px;
+    gap: 4rem;
+    align-items: start;
+  }
+
+  .article h2 {
+    font-family: var(--font-serif);
+    font-size: clamp(1.8rem, 3vw, 2.35rem);
+    font-weight: 400;
+    line-height: 1.15;
+    margin: 2.5rem 0 1rem;
+  }
+
+  .article h2:first-child { margin-top: 0; }
+
+  .article p {
+    color: var(--sumi);
+    line-height: 1.85;
+    margin-bottom: 1.2rem;
+  }
+
+  .assistants {
+    display: grid;
+    gap: 0.75rem;
+    margin-top: 1.25rem;
+  }
+
+  .assistant-row {
+    border-left: 2px solid var(--mist);
+    padding-left: 1rem;
+  }
+
+  .assistant-row strong {
+    display: block;
+    font-weight: 600;
+  }
+
+  .assistant-row span {
+    color: var(--stone);
+    font-size: 0.9rem;
+  }
+
+  .side-panel {
+    background: var(--paper);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1.5rem;
+    position: sticky;
+    top: 1.5rem;
+  }
+
+  .side-panel h2 {
+    font-family: var(--font-serif);
+    font-size: 1.45rem;
+    font-weight: 400;
+    margin-bottom: 1rem;
+  }
+
+  .side-panel dl {
+    display: grid;
+    gap: 0.9rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .side-panel dt {
+    color: var(--stone);
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .side-panel dd {
+    color: var(--ink);
+    font-size: 0.95rem;
+  }
+
+  .side-panel .btn {
+    width: 100%;
+    text-align: center;
+    margin-top: 0.75rem;
+  }
+
+  .teacher-quote {
+    border-top: 2px solid var(--mist);
+    border-bottom: 1px solid var(--border);
+    margin: 2rem 0;
+    padding: 1.5rem 0;
+  }
+
+  .teacher-quote p {
+    font-family: var(--font-serif);
+    font-size: 1.45rem;
+    line-height: 1.3;
+    color: var(--ink);
+    margin: 0;
+  }
+
+  .site-footer {
+    background: var(--sumi);
+    padding: 2rem;
+    text-align: center;
+  }
+
+  .site-footer p,
+  .site-footer a {
+    color: rgba(201,168,130,0.55);
+    font-size: 0.8rem;
+    text-decoration: none;
+  }
+
+  @media (max-width: 820px) {
+    .nav-links { display: none; }
+    .teacher-hero-grid,
+    .content-grid {
+      grid-template-columns: 1fr;
+      gap: 2.5rem;
+    }
+
+    .teacher-photo { max-width: 420px; }
+    .side-panel { position: static; }
+  }
+
+  @media (max-width: 520px) {
+    .container { padding: 0 1.5rem; }
+    .teacher-hero { padding: 3.5rem 0; }
+    .teacher-content { padding: 3.5rem 0; }
+  }
+</style>
+</head>
+<body>
+
+<header class="site-nav">
+  <div class="container">
+    <nav class="nav-inner">
+      <a href="/" class="nav-logo">
+        <img src="logo ima juku.png" alt="Ima Juku logo">
+        <div>Ima Juku<span>Aikido · sinds 2005</span></div>
+      </a>
+      <ul class="nav-links">
+        <li><a href="/#over">Over aikido</a></li>
+        <li><a href="/leraar.html">Hoofdleraar</a></li>
+        <li><a href="/#leraren">Leraren</a></li>
+        <li><a href="/#trainingen">Trainingen</a></li>
+        <li><a href="/#contact">Contact</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <section class="teacher-hero">
+    <div class="container">
+      <div class="teacher-hero-grid">
+        <div>
+          <span class="overline">Hoofdleraar &amp; oprichter</span>
+          <h1>Arjan de Vries</h1>
+          <p>Arjan de Vries is de oprichter en hoofdleraar van Ima Juku Aikido in Baarn en Zeist. Sinds de start van de dojo in 2005 deelt hij Aikido met mensen die serieus willen trainen in een open, veilige en respectvolle omgeving.</p>
+          <a href="/proefles.html" class="btn btn-primary">Proefles aanvragen</a>
+        </div>
+        <figure class="teacher-photo">
+          <img src="afbeeldingen/leraren/img_03_22c4f94d0044.jpg" alt="Arjan de Vries, hoofdleraar van Ima Juku Aikido" loading="lazy">
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <section class="teacher-content">
+    <div class="container">
+      <div class="content-grid">
+        <article class="article">
+          <h2>Aikido delen met anderen</h2>
+          <p>Na jaren van toegewijde training richtte Arjan in 2005 Ima Juku op. De dojo begon in Baarn en kreeg later ook een trainingslocatie in Zeist. De bedoeling was helder: Aikido verder verspreiden en toegankelijk maken voor mensen die deze krijgskunst echt willen leren.</p>
+          <p>Arjans streven is om Aikido te delen met zoveel mogelijk mensen die bereid zijn om te oefenen, te onderzoeken en zich te ontwikkelen. Niet alleen technisch, maar ook in houding, aandacht en samenwerking.</p>
+
+          <div class="teacher-quote">
+            <p>“Aikido is een levensstijl.”</p>
+          </div>
+
+          <h2>Techniek, relatie en ontwikkeling</h2>
+          <p>Voor Arjan gaat Aikido niet alleen over technieken. Minstens zo belangrijk zijn de relaties op de mat: hoe je contact maakt, hoe je beweegt met druk, hoe je leert afstemmen en hoe je daarin jezelf blijft ontwikkelen.</p>
+          <p>Hij ziet zijn manier van Aikido niet als de enige ware vorm. Wel doet hij zijn best om het pad dat hij zelf bewandelt eerlijk te delen met anderen. Juist daardoor blijft Aikido levend, onderzoekend en boeiend.</p>
+
+          <h2>In de dojo</h2>
+          <p>Arjan is hoofd- en eindverantwoordelijk voor de dojo. Als hij niet beschikbaar is, worden de lessen gedragen door gecertificeerde assistenten die de groep goed kennen en nieuwe leerlingen welkom heten.</p>
+          <div class="assistants">
+            <div class="assistant-row">
+              <strong>Martijn van Brummelen</strong>
+              <span>3de dan · niveau 3 Aikido leraar</span>
+            </div>
+            <div class="assistant-row">
+              <strong>Dennis Bunt</strong>
+              <span>3de dan · niveau 2 Aikido assistent</span>
+            </div>
+            <div class="assistant-row">
+              <strong>Rudi Brouwer</strong>
+              <span>3de dan · niveau 2 Aikido assistent</span>
+            </div>
+          </div>
+
+          <h2>Een uitnodiging</h2>
+          <p>Aikido heeft Arjans leven op een positieve manier veranderd. Hij beschouwt het als een voorrecht om die ervaring te delen met mensen die nieuwsgierig zijn naar Aikido, naar training en naar een andere manier van omgaan met kracht.</p>
+          <p>Wie wil ervaren of Aikido past, is welkom om twee gratis proeflessen te volgen in Baarn of Zeist.</p>
+        </article>
+
+        <aside class="side-panel">
+          <h2>Kort over Arjan</h2>
+          <dl>
+            <div>
+              <dt>Graad</dt>
+              <dd>Rokudan · 6de dan Aikido</dd>
+            </div>
+            <div>
+              <dt>Rol</dt>
+              <dd>Hoofdleraar, oprichter en eindverantwoordelijke van Ima Juku</dd>
+            </div>
+            <div>
+              <dt>Dojo</dt>
+              <dd>Ima Juku Aikido · Baarn &amp; Zeist</dd>
+            </div>
+            <div>
+              <dt>Sinds</dt>
+              <dd>Oprichting Ima Juku in 2005</dd>
+            </div>
+          </dl>
+          <a href="/#trainingen" class="btn btn-outline-dark">Trainingstijden bekijken</a>
+          <a href="/proefles.html" class="btn btn-primary">Kom proeftrainen</a>
+        </aside>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <p><a href="/">Ima Juku</a> · Aikido in Baarn &amp; Zeist · <a href="/#contact">Contact</a> · <a href="cookiebeleid.html">Cookiebeleid</a></p>
+</footer>
+
+<script src="cookies.js" defer></script>
+</body>
+</html>

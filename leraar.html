@@ -278,6 +278,51 @@
     margin-top: 0.75rem;
   }
 
+  .side-photo {
+    border-radius: 8px;
+    margin-bottom: 1.25rem;
+    overflow: hidden;
+    background: var(--white);
+  }
+
+  .side-photo img {
+    display: block;
+    width: 100%;
+    aspect-ratio: 16 / 10;
+    object-fit: cover;
+  }
+
+  .side-photo figcaption {
+    color: var(--stone);
+    font-size: 0.78rem;
+    line-height: 1.5;
+    padding-top: 0.65rem;
+  }
+
+  .video-block {
+    margin: 2.5rem 0;
+  }
+
+  .video-block h2 {
+    margin-top: 0;
+  }
+
+  .video-frame {
+    border-radius: 8px;
+    box-shadow: 0 18px 42px rgba(28,14,6,0.12);
+    margin-top: 1.25rem;
+    overflow: hidden;
+    position: relative;
+    width: 100%;
+  }
+
+  .video-frame iframe {
+    aspect-ratio: 16 / 9;
+    border: 0;
+    display: block;
+    width: 100%;
+  }
+
   .teacher-quote {
     border-top: 2px solid var(--mist);
     border-bottom: 1px solid var(--border);
@@ -377,6 +422,14 @@
           <p>Voor Arjan gaat Aikido niet alleen over technieken. Minstens zo belangrijk zijn de relaties op de mat: hoe je contact maakt, hoe je beweegt met druk, hoe je leert afstemmen en hoe je daarin jezelf blijft ontwikkelen.</p>
           <p>Hij ziet zijn manier van Aikido niet als de enige ware vorm. Wel doet hij zijn best om het pad dat hij zelf bewandelt eerlijk te delen met anderen. Juist daardoor blijft Aikido levend, onderzoekend en boeiend.</p>
 
+          <section class="video-block" aria-labelledby="video-heading">
+            <h2 id="video-heading">Arjan over Aikido</h2>
+            <p>In deze video vertelt Arjan over Aikido, training en de manier waarop hij deze weg beleeft en doorgeeft.</p>
+            <div class="video-frame">
+              <iframe src="https://player.vimeo.com/video/384366400?dnt=1&title=0&byline=0&portrait=0" title="Arjan de Vries over Aikido" allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share" allowfullscreen loading="lazy"></iframe>
+            </div>
+          </section>
+
           <h2>In de dojo</h2>
           <p>Arjan is hoofd- en eindverantwoordelijk voor de dojo. Als hij niet beschikbaar is, worden de lessen gedragen door gecertificeerde assistenten die de groep goed kennen en nieuwe leerlingen welkom heten.</p>
           <div class="assistants">
@@ -400,6 +453,10 @@
         </article>
 
         <aside class="side-panel">
+          <figure class="side-photo">
+            <img src="afbeeldingen/leraren/Arjan-met-certificaat-rokudan-klein.jpg" alt="Arjan de Vries met zijn rokudan-certificaat">
+            <figcaption>Arjan de Vries met het certificaat voor zijn 6de dan Aikido.</figcaption>
+          </figure>
           <h2>Kort over Arjan</h2>
           <dl>
             <div>

@@ -252,8 +252,6 @@ Regels:
 }
 
 async function buildTeacherDraftMail({ data, locaties, dateAnalysis }) {
-  const invalidDates = dateAnalysis.filter(item => !item.valid);
-  const hasInvalidDates = invalidDates.length > 0;
   const firstName = data['VCQticEHHg'] || 'daar';
   let personalNote = '';
   try {
@@ -273,8 +271,6 @@ async function buildTeacherDraftMail({ data, locaties, dateAnalysis }) {
   const dateLines = dateAnalysis.map(item => item.formatted).join('\n');
   const dateHtml = dateAnalysis.map(item => `<li>${escapeHtml(item.formatted)}${item.valid ? '' : ' <strong>(controle nodig)</strong>'}</li>`).join('');
   const subject = `Proeflesreactie - ${data['VCQticEHHg'] || ''} ${data['FEqqKfvEJN'] || ''}`.trim();
-  const opmerking = (data['kjrtQYYCLh'] || '').trim();
-  const motivatie = (data['f9g5G3RavQ'] || '').trim();
 
   const text = `Beste ${firstName},
 
@@ -329,18 +325,7 @@ Tot snel in de dojo! We kijken er naar uit om je te mogen ontvangen!
 Vriendelijke groet,
 
 Arjan de Vries
-Ima Juku Aikido leraar en oprichter (6de dan)
-
----
-Interne controle:
-Naam: ${data['VCQticEHHg'] || ''} ${data['FEqqKfvEJN'] || ''}
-E-mail: ${data['PI6DA7TLP7'] || ''}
-Telefoon: ${data['zZH7Jm1GrV'] || ''}
-Locatievoorkeur: ${locaties.join(', ') || 'niet opgegeven'}
-Student: ${data['wQHcc605z4'] || 'niet opgegeven'}
-Waarom Aikido: ${motivatie || 'geen'}
-Opmerking: ${opmerking || 'geen'}
-Datumcontrole: ${hasInvalidDates ? buildDateWarningText(dateAnalysis) : 'geen bijzonderheden'}`;
+Ima Juku Aikido leraar en oprichter (6de dan)`;
 
   const html = `
     <p>Beste ${escapeHtml(firstName)},</p>
@@ -383,17 +368,6 @@ Datumcontrole: ${hasInvalidDates ? buildDateWarningText(dateAnalysis) : 'geen bi
 
     <p>Tot snel in de dojo! We kijken er naar uit om je te mogen ontvangen!</p>
     <p>Vriendelijke groet,<br><br>Arjan de Vries<br>Ima Juku Aikido leraar en oprichter (6de dan)</p>
-
-    <hr>
-    <p><strong>Interne controle voor Arjan:</strong><br>
-    Naam: ${escapeHtml(`${data['VCQticEHHg'] || ''} ${data['FEqqKfvEJN'] || ''}`.trim())}<br>
-    E-mail: ${escapeHtml(data['PI6DA7TLP7'])}<br>
-    Telefoon: ${escapeHtml(data['zZH7Jm1GrV'])}<br>
-    Locatievoorkeur: ${escapeHtml(locaties.join(', ') || 'niet opgegeven')}<br>
-    Student: ${escapeHtml(data['wQHcc605z4'] || 'niet opgegeven')}<br>
-    Waarom Aikido: ${escapeHtml(motivatie || 'geen')}<br>
-    Opmerking: ${escapeHtml(opmerking || 'geen')}<br>
-    Datumcontrole: ${escapeHtml(hasInvalidDates ? buildDateWarningText(dateAnalysis) : 'geen bijzonderheden')}</p>
   `;
 
   return { subject, text, html };

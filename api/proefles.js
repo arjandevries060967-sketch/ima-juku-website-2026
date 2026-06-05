@@ -184,11 +184,16 @@ function buildDateLines(dateAnalysis) {
 
 async function generatePersonalNote({ data, locaties, dateAnalysis }) {
   const opmerking = (data['kjrtQYYCLh'] || '').trim();
+  const isStudent = (data['wQHcc605z4'] || '').toLowerCase() === 'ja';
   const invalidWarning = buildDateWarningText(dateAnalysis);
-  if (!process.env.OPENAI_API_KEY || (!opmerking && !invalidWarning)) {
-    if (!opmerking && !invalidWarning) return '';
+  const studentNote = isStudent
+    ? 'Ik zie dat je hebt aangegeven dat je student bent. Voor studenten gelden aangepaste lesgelden; dat tarief is lager dan het reguliere tarief.'
+    : '';
+  if (!process.env.OPENAI_API_KEY || (!opmerking && !invalidWarning && !studentNote)) {
+    if (!opmerking && !invalidWarning && !studentNote) return '';
     return [
       opmerking ? `Ik lees bij je opmerking: "${opmerking}". We nemen dit mee wanneer we de proefles met je afstemmen.` : '',
+      studentNote,
       invalidWarning,
     ].filter(Boolean).join('\n\n');
   }
@@ -202,6 +207,7 @@ Context:
 - Gekozen data:
 ${buildDateLines(dateAnalysis)}
 - Datumwaarschuwing: ${invalidWarning || 'geen'}
+- Student: ${isStudent ? 'ja' : 'nee of niet opgegeven'}
 - Opmerking van aanvrager: ${opmerking || 'geen'}
 
 Regels:
@@ -210,6 +216,7 @@ Regels:
 - Geef geen medische diagnose of medisch advies.
 - Als er een blessure of gezondheidsopmerking staat: erken dat voorzichtig, zeg dat we daar op de mat rekening mee kunnen houden, dat iemand binnen eigen grenzen traint, en dat overleg met arts/fysiotherapeut verstandig is bij twijfel.
 - Als er een datumwaarschuwing is: noem die helder en vraag om een nieuwe passende datum.
+- Als de aanvrager student is: noem dat er aangepaste lesgelden voor studenten gelden en dat dit goedkoper is dan het reguliere tarief. Noem geen bedrag.
 - Maximaal 120 woorden.
 `.trim();
 
@@ -309,6 +316,7 @@ Naam: ${data['VCQticEHHg'] || ''} ${data['FEqqKfvEJN'] || ''}
 E-mail: ${data['PI6DA7TLP7'] || ''}
 Telefoon: ${data['zZH7Jm1GrV'] || ''}
 Locatievoorkeur: ${locaties.join(', ') || 'niet opgegeven'}
+Student: ${data['wQHcc605z4'] || 'niet opgegeven'}
 Opmerking: ${opmerking || 'geen'}
 Datumcontrole: ${hasInvalidDates ? buildDateWarningText(dateAnalysis) : 'geen bijzonderheden'}`;
 
@@ -360,6 +368,7 @@ Datumcontrole: ${hasInvalidDates ? buildDateWarningText(dateAnalysis) : 'geen bi
     E-mail: ${escapeHtml(data['PI6DA7TLP7'])}<br>
     Telefoon: ${escapeHtml(data['zZH7Jm1GrV'])}<br>
     Locatievoorkeur: ${escapeHtml(locaties.join(', ') || 'niet opgegeven')}<br>
+    Student: ${escapeHtml(data['wQHcc605z4'] || 'niet opgegeven')}<br>
     Opmerking: ${escapeHtml(opmerking || 'geen')}<br>
     Datumcontrole: ${escapeHtml(hasInvalidDates ? buildDateWarningText(dateAnalysis) : 'geen bijzonderheden')}</p>
   `;

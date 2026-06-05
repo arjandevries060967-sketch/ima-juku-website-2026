@@ -469,7 +469,7 @@
   <img src="logo ima juku.png" alt="" class="page-header-watermark" aria-hidden="true">
   <span class="overline">Gratis en vrijblijvend</span>
   <h1>Vraag een proefles aan</h1>
-  <p>Kom een avond kijken en meedoen. Geen verplichtingen — wel een eerlijke indruk van wat aikido bij Ima Juku is.</p>
+  <p>Kom een avond kijken en meedoen. Geen verplichtingen — wel een eerlijke indruk van wat aikido bij Ima Juku is. Onze dojo is voor volwassenen vanaf 18 jaar.</p>
 </div>
 
 <!-- FORM -->
@@ -503,7 +503,8 @@
     <div class="form-row two-col">
       <div class="form-field">
         <label for="WEiUDNfM7O">Leeftijd <span class="req">*</span></label>
-        <input type="number" id="WEiUDNfM7O" name="WEiUDNfM7O" min="10" max="99" required>
+        <input type="number" id="WEiUDNfM7O" name="WEiUDNfM7O" min="18" max="99" required>
+        <span class="hint">Ima Juku is een dojo voor volwassenen vanaf 18 jaar.</span>
       </div>
       <div class="form-field">
         <label>Geslacht <span class="req">*</span></label>
@@ -630,8 +631,13 @@
 <script src="cookies.js" defer></script>
 <script>
   // Toon foutbanner als URL ?fout parameter heeft
-  if (new URLSearchParams(location.search).get('fout')) {
-    document.getElementById('fout-banner').classList.add('zichtbaar');
+  const fout = new URLSearchParams(location.search).get('fout');
+  if (fout) {
+    const foutBanner = document.getElementById('fout-banner');
+    if (fout === 'leeftijd') {
+      foutBanner.textContent = 'Ima Juku is een dojo voor volwassenen vanaf 18 jaar. Daardoor kun je onder de 18 geen proefles aanvragen via dit formulier.';
+    }
+    foutBanner.classList.add('zichtbaar');
   }
 
   // Vul submit-duration in zodat Laposta botsubmissions kan detecteren

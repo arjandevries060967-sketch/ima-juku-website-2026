@@ -504,6 +504,10 @@ module.exports = async function handler(req, res) {
     const raw = await readBody(req);
     const d   = parseBody(raw);
 
+    const leeftijd = Number.parseInt(d['WEiUDNfM7O'] || '', 10);
+    if (!Number.isFinite(leeftijd) || leeftijd < 18) {
+      return res.redirect(302, '/proefles?fout=leeftijd');
+    }
 
     const locatieRaw = d['Y8OEFhf1ac[]'];
     // Altijd als array, ook bij één keuze — Laposta checkbox-veld vereist array-notatie

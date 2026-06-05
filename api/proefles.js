@@ -471,6 +471,19 @@ async function createGmailDraft({ to, mail }) {
   return response.json();
 }
 
+async function createTeacherDraftSafely({ data, locaties, dateAnalysis, reason }) {
+  try {
+    const draftMail = await buildTeacherDraftMail({ data, locaties, dateAnalysis });
+    const draft = await createGmailDraft({ to: data['PI6DA7TLP7'], mail: draftMail });
+    console.log('Gmail-concept proefles aangemaakt', JSON.stringify({
+      draftId: draft?.id || null,
+      reason,
+    }));
+  } catch (draftErr) {
+    console.error('Gmail-concept proefles mislukt:', draftErr);
+  }
+}
+
 module.exports = async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).send('Method not allowed');
@@ -535,20 +548,13 @@ module.exports = async function handler(req, res) {
     console.log('Laposta status:', lapostaRes.status, JSON.stringify(result));
 
     if (lapostaRes.ok) {
-      try {
-        const draftMail = await buildTeacherDraftMail({ data: d, locaties, dateAnalysis });
-        const draft = await createGmailDraft({ to: d['PI6DA7TLP7'], mail: draftMail });
-        console.log('Gmail-concept proefles aangemaakt', JSON.stringify({
-          draftId: draft?.id || null,
-        }));
-      } catch (draftErr) {
-        console.error('Gmail-concept proefles mislukt:', draftErr);
-      }
+      await createTeacherDraftSafely({ data: d, locaties, dateAnalysis, reason: 'laposta-ok' });
       return res.redirect(302, '/bedankt');
     }
 
     // E-mailadres staat al in de lijst
     if (result?.error?.code === 204) {
+      await createTeacherDraftSafely({ data: d, locaties, dateAnalysis, reason: 'laposta-duplicate' });
       return res.redirect(302, '/bedankt?al=1');
     }
 

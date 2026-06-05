@@ -272,7 +272,7 @@ async function buildTeacherDraftMail({ data, locaties, dateAnalysis }) {
   }
   const dateLines = dateAnalysis.map(item => item.formatted).join('\n');
   const dateHtml = dateAnalysis.map(item => `<li>${escapeHtml(item.formatted)}${item.valid ? '' : ' <strong>(controle nodig)</strong>'}</li>`).join('');
-  const subject = `Concept proeflesreactie — ${data['VCQticEHHg'] || ''} ${data['FEqqKfvEJN'] || ''}`.trim();
+  const subject = `Proeflesreactie - ${data['VCQticEHHg'] || ''} ${data['FEqqKfvEJN'] || ''}`.trim();
   const opmerking = (data['kjrtQYYCLh'] || '').trim();
   const motivatie = (data['f9g5G3RavQ'] || '').trim();
 

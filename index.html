@@ -632,6 +632,20 @@
     padding-top: 1.25rem;
   }
 
+  .leraar-photo {
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    overflow: hidden;
+    background: var(--paper);
+  }
+
+  .leraar-photo img {
+    display: block;
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+  }
+
   .leraar-card .naam {
     font-family: var(--font-serif);
     font-size: 1.3rem;
@@ -1029,6 +1043,9 @@
     </div>
     <div class="leraren-grid">
       <div class="leraar-card">
+        <figure class="leraar-photo">
+          <img src="afbeeldingen/leraren/img_03_22c4f94d0044.jpg" alt="Arjan de Vries, hoofdleraar van Ima Juku Aikido" loading="lazy">
+        </figure>
         <p class="naam">Arjan de Vries</p>
         <span class="dan">6de dan · hoofdleraar</span>
         <p class="bio">Meer dan 30 jaar Aikido ervaring. Heeft Ima Juku opgericht en is hoofd- en eindverantwoordelijk voor de dojo.</p>

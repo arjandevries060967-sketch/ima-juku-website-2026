@@ -7,6 +7,55 @@
 <link rel="icon" type="image/png" href="/afbeeldingen/Logo/img_07_7fc4bc868d27.png">
 <link rel="apple-touch-icon" href="/afbeeldingen/Logo/img_07_7fc4bc868d27.png">
 <meta name="description" content="Ima Juku is een open aikidodojo voor volwassenen vanaf 18 jaar in Baarn en Zeist. Kom een proefles doen.">
+<link rel="canonical" href="https://www.imajuku.nl/">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="nl_NL">
+<meta property="og:site_name" content="Ima Juku Aikido">
+<meta property="og:title" content="Ima Juku — Aikido in Baarn & Zeist">
+<meta property="og:description" content="Een open aikidodojo voor volwassenen vanaf 18 jaar in Baarn en Zeist. Kom vrijblijvend twee proeflessen doen.">
+<meta property="og:url" content="https://www.imajuku.nl/">
+<meta property="og:image" content="https://www.imajuku.nl/afbeeldingen/training/hero_arjan_rudi_2.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Ima Juku — Aikido in Baarn & Zeist">
+<meta name="twitter:description" content="Een open aikidodojo voor volwassenen vanaf 18 jaar in Baarn en Zeist.">
+<meta name="twitter:image" content="https://www.imajuku.nl/afbeeldingen/training/hero_arjan_rudi_2.jpg">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SportsActivityLocation",
+  "name": "Ima Juku Aikido",
+  "url": "https://www.imajuku.nl/",
+  "description": "Aikidodojo voor volwassenen vanaf 18 jaar in Baarn en Zeist.",
+  "sport": "Aikido",
+  "image": "https://www.imajuku.nl/afbeeldingen/training/hero_arjan_rudi_2.jpg",
+  "email": "info@imajuku.nl",
+  "sameAs": [
+    "https://portaal.imajuku.nl"
+  ],
+  "location": [
+    {
+      "@type": "Place",
+      "name": "Ima Juku Zeist",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "Noordweg 10",
+        "addressLocality": "Zeist",
+        "addressCountry": "NL"
+      }
+    },
+    {
+      "@type": "Place",
+      "name": "Ima Juku Baarn",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "Begoniastraat 4",
+        "addressLocality": "Baarn",
+        "addressCountry": "NL"
+      }
+    }
+  ]
+}
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -47,6 +96,15 @@
 
   img { display: block; max-width: 100%; }
   a { color: inherit; }
+
+  a:focus-visible,
+  button:focus-visible,
+  summary:focus-visible,
+  input:focus-visible,
+  textarea:focus-visible {
+    outline: 3px solid var(--gold);
+    outline-offset: 3px;
+  }
 
   /* ─── Layout helpers ──────────────────────────── */
   .container {
@@ -601,6 +659,10 @@
     padding-top: 0.25rem;
   }
 
+  .kosten-actions {
+    margin-top: 1.5rem;
+  }
+
   /* ─── CTA PROEFLES ────────────────────────────── */
   .cta-section {
     background: radial-gradient(ellipse at 50% 120%, #3A1A0A 0%, #1C0E06 55%);
@@ -701,6 +763,57 @@
     font-size: 0.875rem;
     color: var(--stone);
     line-height: 1.65;
+  }
+
+  /* ─── FAQ ───────────────────────────────────────── */
+  .faq-section {
+    background: var(--paper);
+    padding: var(--section-gap) 0;
+  }
+
+  .faq-header {
+    margin-bottom: 2.5rem;
+    max-width: 680px;
+  }
+
+  .faq-header .overline { margin-bottom: 1rem; }
+
+  .faq-header h2 {
+    font-family: var(--font-serif);
+    font-size: clamp(1.8rem, 3vw, 2.5rem);
+    font-weight: 400;
+    line-height: 1.15;
+    margin-bottom: 1rem;
+  }
+
+  .faq-header p {
+    color: var(--sumi);
+    line-height: 1.75;
+  }
+
+  .faq-list {
+    display: grid;
+    gap: 0.75rem;
+  }
+
+  .faq-list details {
+    background: var(--white);
+    border: 1px solid rgba(201,168,130,0.35);
+    border-radius: 8px;
+    padding: 1rem 1.25rem;
+  }
+
+  .faq-list summary {
+    cursor: pointer;
+    font-weight: 600;
+    color: var(--ink);
+  }
+
+  .faq-list details p {
+    color: var(--stone);
+    font-size: 0.92rem;
+    line-height: 1.75;
+    margin-top: 0.8rem;
   }
 
   /* ─── DOJO SFEER ───────────────────────────────── */
@@ -1060,6 +1173,28 @@
         </div>
       </div>
 
+	    </div>
+
+    <div class="kosten-block">
+      <div class="kosten-item">
+        <span class="overline">Proeflessen</span>
+        <h4>2x gratis</h4>
+        <p>Je kunt twee keer vrijblijvend meetrainen voordat je beslist.</p>
+      </div>
+      <div class="kosten-item">
+        <span class="overline">Daarna</span>
+        <h4>Lid worden</h4>
+        <p>Na je proeflessen bespreken we rustig het passende lidmaatschap.</p>
+      </div>
+      <div class="kosten-item">
+        <span class="overline">Studenten</span>
+        <h4>Lager tarief</h4>
+        <p>Voor studenten geldt een aangepast, goedkoper lesgeld.</p>
+      </div>
+      <p class="kosten-note">De proeflessen zijn gratis en verplichten tot niets. Actuele lesgelden en praktische afspraken bespreken we persoonlijk, zodat je precies weet waar je aan toe bent voordat je lid wordt.</p>
+      <div class="kosten-actions">
+        <a href="/#contact" class="btn btn-outline-dark">Vraag over tarieven</a>
+      </div>
     </div>
 
     <figure class="training-photo">
@@ -1104,6 +1239,43 @@
         <span class="dan">Assistent · niveau 3 Aikido leraar</span>
         <p class="bio">Lid vanaf bijna het eerste uur van Ima Juku.</p>
       </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── VEELGESTELDE VRAGEN ─────────────────────────── -->
+<section class="faq-section" id="veelgestelde-vragen">
+  <div class="container">
+    <div class="faq-header">
+      <span class="overline">Veelgestelde vragen</span>
+      <h2>Wat wil je meestal weten voor je de mat op stapt?</h2>
+      <p>Een proefles is bedoeld om rustig te ervaren hoe Aikido bij Ima Juku voelt. Dit zijn de vragen die vaak vooraf al helpen.</p>
+    </div>
+    <div class="faq-list">
+      <details>
+        <summary>Moet ik ervaring hebben met Aikido of vechtsport?</summary>
+        <p>Nee. Beginners zijn welkom. Je hoeft niets te bewijzen en je krijgt begeleiding op de mat.</p>
+      </details>
+      <details>
+        <summary>Wat trek ik aan voor een proefles?</summary>
+        <p>Een trainingsbroek zonder ritsen of een legging met een T-shirt is prima. Je traint zonder schoenen of sokken op de mat.</p>
+      </details>
+      <details>
+        <summary>Kan ik eerst alleen komen kijken?</summary>
+        <p>Dat kan. Toch raden we meestal aan om mee te doen, omdat je Aikido vooral ervaart door te bewegen.</p>
+      </details>
+      <details>
+        <summary>Kan ik meetrainen met een blessure?</summary>
+        <p>Geef een blessure altijd vooraf of bij binnenkomst aan. We denken graag mee en je traint binnen je eigen grenzen. Bij twijfel is overleg met arts of fysiotherapeut verstandig.</p>
+      </details>
+      <details>
+        <summary>Vanaf welke leeftijd kan ik me aanmelden?</summary>
+        <p>Ima Juku is een dojo voor volwassenen vanaf 18 jaar.</p>
+      </details>
+      <details>
+        <summary>Wat kost het na de proeflessen?</summary>
+        <p>De eerste twee proeflessen zijn gratis. Daarna bespreken we het passende lidmaatschap. Studenten betalen een lager tarief.</p>
+      </details>
     </div>
   </div>
 </section>

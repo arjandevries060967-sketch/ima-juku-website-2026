@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pagina niet gevonden — Ima Juku Aikido</title>
+<link rel="icon" type="image/png" href="/afbeeldingen/Logo/img_07_7fc4bc868d27.png">
+<link rel="apple-touch-icon" href="/afbeeldingen/Logo/img_07_7fc4bc868d27.png">
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="cookies.css">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --ink:#1C0E06; --sumi:#3A1A0A; --stone:#7A5A45; --mist:#C9A882;
+    --paper:#F8F0E3; --white:#FDF8F2; --red:#C42B1A; --red-hover:#A82415;
+    --gold:#D4820A; --font-serif:'DM Serif Display', Georgia, serif; --font-sans:'Inter', system-ui, sans-serif;
+    --radius:4px;
+  }
+
+  body {
+    background: radial-gradient(ellipse at 70% 50%, #3A1A0A 0%, #1C0E06 60%);
+    color: var(--white);
+    font-family: var(--font-sans);
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  a:focus-visible {
+    outline: 3px solid var(--gold);
+    outline-offset: 3px;
+  }
+
+  .page {
+    align-items: center;
+    display: grid;
+    min-height: 100vh;
+    padding: 3rem 1.5rem;
+  }
+
+  .panel {
+    margin: 0 auto;
+    max-width: 720px;
+    position: relative;
+    text-align: center;
+  }
+
+  .logo {
+    border-radius: 50%;
+    display: block;
+    height: 64px;
+    margin: 0 auto 1.5rem;
+    opacity: 0.82;
+    width: 64px;
+  }
+
+  .overline {
+    color: var(--gold);
+    display: block;
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    margin-bottom: 1rem;
+    text-transform: uppercase;
+  }
+
+  h1 {
+    font-family: var(--font-serif);
+    font-size: clamp(2.5rem, 6vw, 4.5rem);
+    font-weight: 400;
+    line-height: 1;
+    margin-bottom: 1.25rem;
+  }
+
+  p {
+    color: var(--mist);
+    font-size: 1rem;
+    line-height: 1.75;
+    margin: 0 auto 2rem;
+    max-width: 560px;
+  }
+
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    justify-content: center;
+  }
+
+  .btn {
+    border-radius: var(--radius);
+    display: inline-block;
+    font-size: 0.875rem;
+    font-weight: 500;
+    letter-spacing: 0.03em;
+    padding: 0.8rem 1.6rem;
+    text-decoration: none;
+  }
+
+  .btn-primary {
+    background: var(--red);
+    color: #fff;
+  }
+
+  .btn-primary:hover { background: var(--red-hover); }
+
+  .btn-outline {
+    border: 1.5px solid rgba(201,168,130,0.55);
+    color: var(--mist);
+  }
+
+  .btn-outline:hover {
+    border-color: var(--mist);
+    color: var(--white);
+  }
+</style>
+</head>
+<body>
+<main class="page">
+  <section class="panel" aria-labelledby="title">
+    <img class="logo" src="/afbeeldingen/Logo/img_07_7fc4bc868d27.png" alt="Ima Juku logo">
+    <span class="overline">404</span>
+    <h1 id="title">Deze pagina is niet gevonden</h1>
+    <p>Misschien is de link verplaatst of verkeerd getypt. Ga terug naar de homepage, vraag een proefles aan, of stuur ons een bericht.</p>
+    <div class="actions">
+      <a class="btn btn-primary" href="/">Naar homepage</a>
+      <a class="btn btn-outline" href="/proefles.html">Proefles aanvragen</a>
+      <a class="btn btn-outline" href="https://wa.me/31643986593?text=Hallo%20Ima%20Juku%2C%20ik%20heb%20een%20vraag." target="_blank" rel="noopener">WhatsApp sturen</a>
+    </div>
+  </section>
+</main>
+<script src="cookies.js" defer></script>
+</body>
+</html>

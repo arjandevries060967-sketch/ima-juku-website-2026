@@ -484,6 +484,16 @@ async function createTeacherDraftSafely({ data, locaties, dateAnalysis, reason }
   }
 }
 
+function isLapostaDuplicate(result) {
+  const code = result?.error?.code;
+  const message = JSON.stringify(result || {});
+  return (
+    code === 204 ||
+    code === '204' ||
+    /already|duplicate|exists|bestaat al|staat al|member/i.test(message)
+  );
+}
+
 module.exports = async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).send('Method not allowed');
@@ -553,7 +563,7 @@ module.exports = async function handler(req, res) {
     }
 
     // E-mailadres staat al in de lijst
-    if (result?.error?.code === 204) {
+    if (isLapostaDuplicate(result)) {
       await createTeacherDraftSafely({ data: d, locaties, dateAnalysis, reason: 'laposta-duplicate' });
       return res.redirect(302, '/bedankt?al=1');
     }

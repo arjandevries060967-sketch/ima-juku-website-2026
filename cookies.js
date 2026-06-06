@@ -116,7 +116,8 @@
     document.body.appendChild(button);
 
     const updateVisibility = () => {
-      button.classList.toggle('zichtbaar', window.scrollY > 520);
+      const scrollPosition = window.scrollY || window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
+      button.classList.toggle('zichtbaar', scrollPosition > 520);
     };
 
     updateVisibility();
@@ -173,7 +174,11 @@
     }
 
     if (target.matches('#back-to-top-button')) {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      if (typeof window.scrollTo === 'function') {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      } else {
+        document.documentElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
     }
 
     if (target.matches('[data-cookie-load-maps]')) {

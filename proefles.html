@@ -248,6 +248,15 @@
     background: var(--white);
   }
 
+  .form-field.is-invalid input[type="text"],
+  .form-field.is-invalid input[type="email"],
+  .form-field.is-invalid input[type="number"],
+  .form-field.is-invalid input[type="date"],
+  .form-field.is-invalid textarea {
+    border-color: var(--red);
+    background: #fff8f6;
+  }
+
   .form-field input::placeholder,
   .form-field textarea::placeholder {
     color: rgba(122,90,69,0.4);
@@ -344,6 +353,26 @@
   .checkbox-option span {
     font-size: 0.875rem;
     color: var(--sumi);
+  }
+
+  .choice-error,
+  .field-error {
+    display: none;
+    color: var(--red);
+    font-size: 0.78rem;
+    line-height: 1.45;
+  }
+
+  .choice-error.zichtbaar,
+  .field-error.zichtbaar {
+    display: block;
+  }
+
+  .radio-group.is-invalid,
+  .checkbox-group.is-invalid {
+    outline: 2px solid var(--red);
+    outline-offset: 0.45rem;
+    border-radius: 4px;
   }
 
   /* ─── Datum info block ────────────────────── */
@@ -499,6 +528,7 @@
   <form
     method="post"
     action="/api/proefles"
+    novalidate
   >
     <div class="fout-banner" id="fout-banner">
       Er is iets misgegaan bij het versturen. Probeer het opnieuw, of stuur een e-mail naar <a href="mailto:info@imajuku.nl" style="color:var(--red)">info@imajuku.nl</a>.
@@ -544,15 +574,16 @@
             <span>Anders</span>
           </label>
         </div>
+        <span class="choice-error" data-choice-error-for="rmF5mwHbQm">Kies je geslacht.</span>
       </div>
     </div>
 
     <div class="form-row">
       <div class="form-field">
-        <label>Ben je student?</label>
+        <label>Ben je student? <span class="req">*</span></label>
         <div class="radio-group inline">
           <label class="radio-option">
-            <input type="radio" name="wQHcc605z4" value="Ja">
+            <input type="radio" name="wQHcc605z4" value="Ja" required>
             <span>Ja</span>
           </label>
           <label class="radio-option">
@@ -560,6 +591,7 @@
             <span>Nee</span>
           </label>
         </div>
+        <span class="choice-error" data-choice-error-for="wQHcc605z4">Kies of je student bent, zodat we het juiste tarief kunnen meenemen.</span>
         <span class="hint">Studenten komen mogelijk in aanmerking voor een gereduceerd tarief.</span>
       </div>
     </div>
@@ -594,6 +626,7 @@
             <span>Baarn — donderdagavond</span>
           </label>
         </div>
+        <span class="choice-error" data-choice-error-for="Y8OEFhf1ac[]">Kies minimaal één locatie waar je een proefles wilt volgen.</span>
         <span class="hint">Je mag beide aanvinken.</span>
       </div>
     </div>
@@ -750,18 +783,103 @@
     input.addEventListener('change', updateDatumWaarschuwingen);
   });
 
-  // Valideer: minstens één locatie moet aangevinkt zijn
-  document.querySelector('form').addEventListener('submit', function(e) {
-    const locatieChecked = document.querySelectorAll('input[name="Y8OEFhf1ac[]"]:checked').length > 0;
-    if (!locatieChecked) {
+  const form = document.querySelector('form');
+  const requiredFieldMessages = {
+    VCQticEHHg: 'Vul je voornaam in.',
+    FEqqKfvEJN: 'Vul je achternaam in.',
+    WEiUDNfM7O: 'Vul je leeftijd in. Ima Juku is voor volwassenen vanaf 18 jaar.',
+    PI6DA7TLP7: 'Vul een geldig e-mailadres in.',
+    zZH7Jm1GrV: 'Vul je telefoonnummer in.',
+    PcvLnGah3B: 'Kies een eerste voorkeursdatum.',
+    FevVlZuZWq: 'Kies een tweede voorkeursdatum.',
+    f9g5G3RavQ: 'Vertel kort waarom je aikido wilt proberen.',
+  };
+
+  function ensureFieldError(input) {
+    const field = input.closest('.form-field');
+    if (!field) return null;
+    let error = field.querySelector(`.field-error[data-field-error-for="${input.id}"]`);
+    if (!error) {
+      error = document.createElement('span');
+      error.className = 'field-error';
+      error.dataset.fieldErrorFor = input.id;
+      input.insertAdjacentElement('afterend', error);
+    }
+    return error;
+  }
+
+  function setFieldInvalid(input, message) {
+    const field = input.closest('.form-field');
+    const error = ensureFieldError(input);
+    field?.classList.add('is-invalid');
+    input.setAttribute('aria-invalid', 'true');
+    if (error) {
+      error.id = `${input.id}-error`;
+      error.textContent = message;
+      error.classList.add('zichtbaar');
+      input.setAttribute('aria-describedby', error.id);
+    }
+  }
+
+  function clearFieldInvalid(input) {
+    const field = input.closest('.form-field');
+    const error = field?.querySelector(`.field-error[data-field-error-for="${input.id}"]`);
+    field?.classList.remove('is-invalid');
+    input.removeAttribute('aria-invalid');
+    if (error) error.classList.remove('zichtbaar');
+  }
+
+  function setChoiceInvalid(name, invalid) {
+    const inputs = [...document.querySelectorAll(`input[name="${name}"]`)];
+    const group = inputs[0]?.closest('.radio-group, .checkbox-group');
+    const error = document.querySelector(`[data-choice-error-for="${name}"]`);
+    group?.classList.toggle('is-invalid', invalid);
+    error?.classList.toggle('zichtbaar', invalid);
+    inputs.forEach(input => input.setAttribute('aria-invalid', invalid ? 'true' : 'false'));
+    return invalid ? group : null;
+  }
+
+  form.querySelectorAll('input[required]:not([type="radio"]), textarea[required]').forEach(input => {
+    input.addEventListener('input', () => {
+      if (input.checkValidity()) clearFieldInvalid(input);
+    });
+    input.addEventListener('change', () => {
+      if (input.checkValidity()) clearFieldInvalid(input);
+    });
+  });
+
+  document.querySelectorAll('input[name="rmF5mwHbQm"], input[name="wQHcc605z4"], input[name="Y8OEFhf1ac[]"]').forEach(input => {
+    input.addEventListener('change', () => {
+      setChoiceInvalid(input.name, document.querySelectorAll(`input[name="${input.name}"]:checked`).length === 0);
+    });
+  });
+
+  form.addEventListener('submit', function(e) {
+    let firstInvalid = null;
+
+    form.querySelectorAll('input[required]:not([type="radio"]), textarea[required]').forEach(input => {
+      if (!input.checkValidity()) {
+        setFieldInvalid(input, requiredFieldMessages[input.id] || 'Vul dit veld in.');
+        firstInvalid ||= input;
+      } else {
+        clearFieldInvalid(input);
+      }
+    });
+
+    const genderInvalidTarget = setChoiceInvalid('rmF5mwHbQm', document.querySelectorAll('input[name="rmF5mwHbQm"]:checked').length === 0);
+    const studentInvalidTarget = setChoiceInvalid('wQHcc605z4', document.querySelectorAll('input[name="wQHcc605z4"]:checked').length === 0);
+    const locatieInvalidTarget = setChoiceInvalid('Y8OEFhf1ac[]', document.querySelectorAll('input[name="Y8OEFhf1ac[]"]:checked').length === 0);
+    firstInvalid ||= genderInvalidTarget || studentInvalidTarget || locatieInvalidTarget;
+
+    if (firstInvalid) {
       e.preventDefault();
-      const groep = document.querySelector('.checkbox-group.inline');
-      groep.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      groep.style.outline = '2px solid var(--red)';
-      groep.style.borderRadius = '4px';
-      setTimeout(() => { groep.style.outline = ''; }, 3000);
+      const foutBanner = document.getElementById('fout-banner');
+      foutBanner.textContent = 'Er ontbreken nog gegevens. Controleer de rood gemarkeerde velden.';
+      foutBanner.classList.add('zichtbaar');
+      firstInvalid.scrollIntoView({ behavior: 'smooth', block: 'center' });
       return;
     }
+
     updateDatumWaarschuwingen();
     const dur = Math.round((Date.now() - startTime) / 1000);
     document.getElementById('submit-duration').value = dur;

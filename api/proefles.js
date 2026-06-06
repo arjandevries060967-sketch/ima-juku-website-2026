@@ -1,8 +1,9 @@
 /**
  * Vercel serverless function: proefles aanmelding → Laposta
  * Vereiste env var in Vercel: LAPOSTA_API_KEY
- * Optioneel voor Gmail-concept: OPENAI_API_KEY, GMAIL_CLIENT_ID, GMAIL_CLIENT_SECRET,
- * GMAIL_REFRESH_TOKEN, GMAIL_DRAFT_FROM
+ * Optioneel voor Gmail-concept: GMAIL_CLIENT_ID, GMAIL_CLIENT_SECRET,
+ * GMAIL_REFRESH_TOKEN, GMAIL_DRAFT_FROM.
+ * AI-tekst staat standaard uit. Alleen met ENABLE_AI_DRAFT_TEXT=true wordt OpenAI gebruikt.
  *
  * Payload wordt volledig handmatig gebouwd met ongeëncodeerde blokhaken,
  * zoals Laposta vereist: custom_fields[voornaam]=Waarde
@@ -190,14 +191,17 @@ async function generatePersonalNote({ data, locaties, dateAnalysis }) {
   const studentNote = isStudent
     ? 'Ik zie dat je hebt aangegeven dat je student bent. Voor studenten gelden aangepaste lesgelden; dat tarief is lager dan het reguliere tarief.'
     : '';
-  if (!process.env.OPENAI_API_KEY || (!motivatie && !opmerking && !invalidWarning && !studentNote)) {
+  const fallbackNote = [
+    motivatie ? `Mooi om te lezen waarom je Aikido wilt proberen: "${motivatie}".` : '',
+    opmerking ? `Ik lees ook je opmerking: "${opmerking}". Geef dit bij binnenkomst gerust nog even aan, dan kunnen we daar op de mat zorgvuldig rekening mee houden.` : '',
+    studentNote,
+    invalidWarning,
+  ].filter(Boolean).join('\n\n');
+
+  const aiEnabled = process.env.ENABLE_AI_DRAFT_TEXT === 'true';
+  if (!aiEnabled || !process.env.OPENAI_API_KEY || (!motivatie && !opmerking && !invalidWarning && !studentNote)) {
     if (!motivatie && !opmerking && !invalidWarning && !studentNote) return '';
-    return [
-      motivatie ? `Mooi om te lezen waarom je Aikido wilt proberen: "${motivatie}".` : '',
-      opmerking ? `Ik lees ook je opmerking: "${opmerking}". Geef dit bij binnenkomst gerust nog even aan, dan kunnen we daar op de mat zorgvuldig rekening mee houden.` : '',
-      studentNote,
-      invalidWarning,
-    ].filter(Boolean).join('\n\n');
+    return fallbackNote;
   }
 
   const prompt = `

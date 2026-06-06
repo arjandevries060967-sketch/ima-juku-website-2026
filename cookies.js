@@ -103,6 +103,26 @@
     document.body.appendChild(button);
   }
 
+  function createBackToTopButton() {
+    if (document.getElementById('back-to-top-button')) return;
+
+    const button = document.createElement('button');
+    button.id = 'back-to-top-button';
+    button.className = 'back-to-top-button';
+    button.type = 'button';
+    button.setAttribute('aria-label', 'Terug naar boven');
+    button.title = 'Terug naar boven';
+    button.textContent = '↑';
+    document.body.appendChild(button);
+
+    const updateVisibility = () => {
+      button.classList.toggle('zichtbaar', window.scrollY > 520);
+    };
+
+    updateVisibility();
+    window.addEventListener('scroll', updateVisibility, { passive: true });
+  }
+
   function showBanner() {
     createBanner();
     const banner = document.getElementById('cookie-banner');
@@ -152,6 +172,10 @@
       showBanner();
     }
 
+    if (target.matches('#back-to-top-button')) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
     if (target.matches('[data-cookie-load-maps]')) {
       const consent = { necessary: true, maps: true };
       saveConsent(consent);
@@ -162,6 +186,7 @@
 
   document.addEventListener('DOMContentLoaded', () => {
     createSettingsButton();
+    createBackToTopButton();
     const consent = readConsent();
     applyConsent(consent || defaultConsent);
     if (!consent) showBanner();

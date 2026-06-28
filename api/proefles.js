@@ -2,7 +2,7 @@
  * Vercel serverless function: proefles aanmelding → Laposta
  * Vereiste env var in Vercel: LAPOSTA_API_KEY
  * Optioneel voor Gmail-concept: GMAIL_CLIENT_ID, GMAIL_CLIENT_SECRET,
- * GMAIL_REFRESH_TOKEN, GMAIL_DRAFT_FROM.
+ * GMAIL_REFRESH_TOKEN, GMAIL_DRAFT_FROM, GMAIL_DRAFT_USER.
  * AI-tekst staat standaard uit. Alleen met ENABLE_AI_DRAFT_TEXT=true wordt OpenAI gebruikt.
  *
  * Payload wordt volledig handmatig gebouwd met ongeëncodeerde blokhaken,
@@ -179,8 +179,38 @@ function buildDateWarningText(dateAnalysis) {
 
 function buildDateLines(dateAnalysis) {
   return dateAnalysis
-    .map(item => `${item.formatted}${item.valid ? '' : ' (niet mogelijk)'}`)
+    .map(item => `${item.formatted}${item.valid ? '' : ' (controle nodig)'}`)
     .join('\n');
+}
+
+function compactHeader(value) {
+  return String(value || '').replace(/[\r\n]+/g, ' ').trim();
+}
+
+function encodeHeader(value) {
+  const header = compactHeader(value);
+  if (/^[\x00-\x7F]*$/.test(header)) return header;
+  return `=?UTF-8?B?${Buffer.from(header, 'utf8').toString('base64')}?=`;
+}
+
+function fullName(data) {
+  return [data['VCQticEHHg'], data['FEqqKfvEJN']]
+    .map(part => String(part || '').trim())
+    .filter(Boolean)
+    .join(' ');
+}
+
+function buildPersonalNoteFallback({ data, dateAnalysis }) {
+  const opmerking = (data['kjrtQYYCLh'] || '').trim();
+  const motivatie = (data['f9g5G3RavQ'] || '').trim();
+  const isStudent = (data['wQHcc605z4'] || '').toLowerCase() === 'ja';
+  const invalidWarning = buildDateWarningText(dateAnalysis);
+  return [
+    motivatie ? `Mooi om te lezen waarom je Aikido wilt proberen: "${motivatie}".` : '',
+    opmerking ? `Ik lees ook je opmerking: "${opmerking}". Geef dit bij binnenkomst gerust nog even aan, dan kunnen we daar op de mat zorgvuldig rekening mee houden.` : '',
+    isStudent ? 'Ik zie dat je hebt aangegeven dat je student bent. Voor studenten gelden aangepaste lesgelden; dat tarief is lager dan het reguliere tarief.' : '',
+    invalidWarning,
+  ].filter(Boolean).join('\n\n');
 }
 
 async function generatePersonalNote({ data, locaties, dateAnalysis }) {
@@ -188,19 +218,11 @@ async function generatePersonalNote({ data, locaties, dateAnalysis }) {
   const motivatie = (data['f9g5G3RavQ'] || '').trim();
   const isStudent = (data['wQHcc605z4'] || '').toLowerCase() === 'ja';
   const invalidWarning = buildDateWarningText(dateAnalysis);
-  const studentNote = isStudent
-    ? 'Ik zie dat je hebt aangegeven dat je student bent. Voor studenten gelden aangepaste lesgelden; dat tarief is lager dan het reguliere tarief.'
-    : '';
-  const fallbackNote = [
-    motivatie ? `Mooi om te lezen waarom je Aikido wilt proberen: "${motivatie}".` : '',
-    opmerking ? `Ik lees ook je opmerking: "${opmerking}". Geef dit bij binnenkomst gerust nog even aan, dan kunnen we daar op de mat zorgvuldig rekening mee houden.` : '',
-    studentNote,
-    invalidWarning,
-  ].filter(Boolean).join('\n\n');
+  const fallbackNote = buildPersonalNoteFallback({ data, dateAnalysis });
 
   const aiEnabled = process.env.ENABLE_AI_DRAFT_TEXT === 'true';
-  if (!aiEnabled || !process.env.OPENAI_API_KEY || (!motivatie && !opmerking && !invalidWarning && !studentNote)) {
-    if (!motivatie && !opmerking && !invalidWarning && !studentNote) return '';
+  if (!aiEnabled || !process.env.OPENAI_API_KEY || (!motivatie && !opmerking && !invalidWarning && !isStudent)) {
+    if (!motivatie && !opmerking && !invalidWarning && !isStudent) return '';
     return fallbackNote;
   }
 
@@ -257,24 +279,19 @@ Regels:
 
 async function buildTeacherDraftMail({ data, locaties, dateAnalysis }) {
   const firstName = data['VCQticEHHg'] || 'daar';
+  const name = fullName(data) || firstName;
   let personalNote = '';
   try {
     personalNote = await generatePersonalNote({ data, locaties, dateAnalysis });
   } catch (noteErr) {
     console.error('AI-persoonlijke alinea mislukt, fallback gebruikt:', noteErr);
-    const opmerking = (data['kjrtQYYCLh'] || '').trim();
-    const motivatie = (data['f9g5G3RavQ'] || '').trim();
-    const isStudent = (data['wQHcc605z4'] || '').toLowerCase() === 'ja';
-    personalNote = [
-      motivatie ? `Mooi om te lezen waarom je Aikido wilt proberen: "${motivatie}".` : '',
-      opmerking ? `Ik lees ook je opmerking: "${opmerking}". Geef dit bij binnenkomst gerust nog even aan, dan kunnen we daar op de mat zorgvuldig rekening mee houden.` : '',
-      isStudent ? 'Ik zie dat je hebt aangegeven dat je student bent. Voor studenten gelden aangepaste lesgelden; dat tarief is lager dan het reguliere tarief.' : '',
-      buildDateWarningText(dateAnalysis),
-    ].filter(Boolean).join('\n\n');
+    personalNote = buildPersonalNoteFallback({ data, dateAnalysis });
   }
-  const dateLines = dateAnalysis.map(item => item.formatted).join('\n');
-  const dateHtml = dateAnalysis.map(item => `<li>${escapeHtml(item.formatted)}${item.valid ? '' : ' <strong>(controle nodig)</strong>'}</li>`).join('');
-  const subject = `Proeflesreactie - ${data['VCQticEHHg'] || ''} ${data['FEqqKfvEJN'] || ''}`.trim();
+  const dateLines = buildDateLines(dateAnalysis);
+  const dateHtml = dateAnalysis
+    .map(item => `<li>${escapeHtml(item.formatted)}${item.valid ? '' : ' <strong>(controle nodig)</strong>'}</li>`)
+    .join('');
+  const subject = `Bevestiging proefles Ima Juku - ${name}`;
 
   const text = `Beste ${firstName},
 
@@ -291,7 +308,7 @@ Meld je even bij de leraar Arjan en maak kennis met de aanwezige leden.
 Sieraden af i.v.m. veiligheid (Aikido is een contactsport).
 In de kleedkamer: schoenen uit, wisselen voor slippers of sokken; jas ophangen, tas laten staan.
 In de zaal: vraag wie de leraar is en meld je bij hem (Arjan).
-We leggen samen de mat (meestal in tweetallen); daarna gaat iedereen zich omkleden.
+We leggen samen de mat; daarna gaat iedereen zich omkleden.
 
 Kledingadvies
 
@@ -299,13 +316,13 @@ Trainingsbroek (zonder ritsen) of legging en t-shirt zijn perfect!
 
 Training (19.45-21.30)
 
-- Na het omkleden kom je rustig terug de zaal in. Zet je slippers bij de rand en stap zonder slippers of sokken de mat op.
-- We nemen even de tijd om kennis te maken en groeten daarna samen aan het begin van de les.
-- Je hoeft nog niets te kunnen. Je kijkt mee met de groep en krijgt begeleiding van een van de assistenten.
-- De warming-up duurt ongeveer 15 minuten en is gericht op soepel bewegen, flexibiliteit en lichte kernversterking. We doen geen conditie- of zware krachtoefeningen.
-- Daarna oefenen we Aikido-technieken, meestal in tweetallen. Na elke uitleg wisselen we van partner, zodat je rustig met verschillende mensen kunt oefenen.
-- 21.00 uur: reguliere les klaar, gevolgd door 30 minuten vrij trainen.
-- 21.30 uur: we groeten af.
+Na het omkleden kom je rustig terug de zaal in. Zet je slippers bij de rand en stap zonder slippers of sokken de mat op.
+We nemen even de tijd om kennis te maken en groeten daarna samen aan het begin van de les.
+Je hoeft nog niets te kunnen. Je kijkt mee met de groep en krijgt begeleiding van een van de assistenten.
+De warming-up duurt ongeveer 15 minuten en is gericht op soepel bewegen, flexibiliteit en lichte kernversterking. We doen geen conditie- of zware krachtoefeningen.
+Daarna oefenen we Aikido-technieken, meestal in tweetallen. Na elke uitleg wisselen we van partner, zodat je rustig met verschillende mensen kunt oefenen.
+21.00 uur: reguliere les klaar, gevolgd door 30 minuten vrij trainen.
+21.30 uur: we groeten af.
 
 Na afloop
 
@@ -388,9 +405,9 @@ function base64Url(value) {
 function buildMimeMessage({ from, to, subject, text, html }) {
   const boundary = `ima-juku-${Date.now()}`;
   return [
-    `From: ${from}`,
-    `To: ${to}`,
-    `Subject: ${subject}`,
+    `From: ${compactHeader(from)}`,
+    `To: ${compactHeader(to)}`,
+    `Subject: ${encodeHeader(subject)}`,
     'MIME-Version: 1.0',
     `Content-Type: multipart/alternative; boundary="${boundary}"`,
     '',
@@ -415,8 +432,12 @@ async function getGmailAccessToken() {
   const clientSecret = process.env.GMAIL_CLIENT_SECRET;
   const refreshToken = process.env.GMAIL_REFRESH_TOKEN;
   if (!clientId || !clientSecret || !refreshToken) {
-    console.log('Gmail-concept overgeslagen: Gmail OAuth-variabelen ontbreken');
-    return null;
+    const missing = [
+      !clientId ? 'GMAIL_CLIENT_ID' : '',
+      !clientSecret ? 'GMAIL_CLIENT_SECRET' : '',
+      !refreshToken ? 'GMAIL_REFRESH_TOKEN' : '',
+    ].filter(Boolean);
+    throw new Error(`Gmail OAuth-config ontbreekt: ${missing.join(', ')}`);
   }
 
   const response = await fetch('https://oauth2.googleapis.com/token', {
@@ -441,8 +462,17 @@ async function getGmailAccessToken() {
 
 async function createGmailDraft({ to, mail }) {
   const from = process.env.GMAIL_DRAFT_FROM || 'info@imajuku.nl';
+  const userId = process.env.GMAIL_DRAFT_USER || 'me';
+  console.log('Gmail-concept proefles starten', JSON.stringify({
+    to,
+    from,
+    userId,
+    subject: mail.subject,
+  }));
+
   const accessToken = await getGmailAccessToken();
-  if (!accessToken || !to) {
+  if (!to) {
+    console.log('Gmail-concept proefles overgeslagen: ontvanger ontbreekt');
     return;
   }
 
@@ -454,8 +484,7 @@ async function createGmailDraft({ to, mail }) {
     html: mail.html,
   }));
 
-  const userId = encodeURIComponent(process.env.GMAIL_DRAFT_USER || 'me');
-  const response = await fetch(`https://gmail.googleapis.com/gmail/v1/users/${userId}/drafts`, {
+  const response = await fetch(`https://gmail.googleapis.com/gmail/v1/users/${encodeURIComponent(userId)}/drafts`, {
     method: 'POST',
     headers: {
       Authorization: `Bearer ${accessToken}`,

@@ -1,6 +1,7 @@
 /**
  * Vercel serverless function: proefles aanmelding → Laposta
  * Vereiste env var in Vercel: LAPOSTA_API_KEY
+ * Gmail-concept staat standaard uit. Zet ENABLE_GMAIL_DRAFTS=true om dit aan te zetten.
  * Optioneel voor Gmail-concept: GMAIL_CLIENT_ID, GMAIL_CLIENT_SECRET,
  * GMAIL_REFRESH_TOKEN, GMAIL_DRAFT_FROM, GMAIL_DRAFT_USER.
  * AI-tekst staat standaard uit. Alleen met ENABLE_AI_DRAFT_TEXT=true wordt OpenAI gebruikt.
@@ -502,6 +503,11 @@ async function createGmailDraft({ to, mail }) {
 }
 
 async function createTeacherDraftSafely({ data, locaties, dateAnalysis, reason }) {
+  if (process.env.ENABLE_GMAIL_DRAFTS !== 'true') {
+    console.log('Gmail-concept proefles uitgeschakeld', JSON.stringify({ reason }));
+    return;
+  }
+
   try {
     const draftMail = await buildTeacherDraftMail({ data, locaties, dateAnalysis });
     const draft = await createGmailDraft({ to: data['PI6DA7TLP7'], mail: draftMail });

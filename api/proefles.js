@@ -2,8 +2,10 @@
  * Vercel serverless function: proefles aanmelding → Laposta
  * Vereiste env var in Vercel: LAPOSTA_API_KEY
  * Gmail-concept staat standaard uit. Zet ENABLE_GMAIL_DRAFTS=true om dit aan te zetten.
- * Optioneel voor Gmail-concept: GMAIL_CLIENT_ID, GMAIL_CLIENT_SECRET,
- * GMAIL_REFRESH_TOKEN, GMAIL_DRAFT_FROM, GMAIL_DRAFT_USER.
+ * Interne Gmail-notificatie staat standaard uit. Zet ENABLE_GMAIL_NOTIFICATIONS=true om dit aan te zetten.
+ * Bevestigingsmail naar aanvrager staat standaard aan. Zet ENABLE_GMAIL_RECEIPTS=false om dit uit te zetten.
+ * Optioneel voor Gmail: GMAIL_CLIENT_ID, GMAIL_CLIENT_SECRET,
+ * GMAIL_REFRESH_TOKEN, GMAIL_DRAFT_FROM, GMAIL_DRAFT_USER, GMAIL_NOTIFICATION_FROM, GMAIL_NOTIFICATION_TO.
  * AI-tekst staat standaard uit. Alleen met ENABLE_AI_DRAFT_TEXT=true wordt OpenAI gebruikt.
  *
  * Payload wordt volledig handmatig gebouwd met ongeëncodeerde blokhaken,
@@ -502,6 +504,275 @@ async function createGmailDraft({ to, mail }) {
   return response.json();
 }
 
+async function sendGmailMessage({ to, mail }) {
+  const from = process.env.GMAIL_NOTIFICATION_FROM || process.env.GMAIL_DRAFT_FROM || 'info@imajuku.nl';
+  const userId = process.env.GMAIL_DRAFT_USER || 'me';
+  console.log('Gmail-notificatie proefles starten', JSON.stringify({
+    to,
+    from,
+    userId,
+    subject: mail.subject,
+  }));
+
+  const accessToken = await getGmailAccessToken();
+  if (!to) {
+    console.log('Gmail-notificatie proefles overgeslagen: ontvanger ontbreekt');
+    return;
+  }
+
+  const raw = base64Url(buildMimeMessage({
+    from,
+    to,
+    subject: mail.subject,
+    text: mail.text,
+    html: mail.html,
+  }));
+
+  const response = await fetch(`https://gmail.googleapis.com/gmail/v1/users/${encodeURIComponent(userId)}/messages/send`, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ raw }),
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text().catch(() => '');
+    throw new Error(`Gmail notificatiefout ${response.status}: ${errorText}`);
+  }
+
+  return response.json();
+}
+
+function buildNotificationRow(label, value, options = {}) {
+  const cleanValue = Array.isArray(value)
+    ? value.filter(Boolean).join(', ')
+    : String(value || '').trim();
+  if (!cleanValue && !options.alwaysShow) return '';
+  const displayValue = cleanValue || 'Niet ingevuld';
+  return `
+    <tr>
+      <td style="padding:10px 12px;border-bottom:1px solid rgba(201,168,130,0.28);font:600 12px/1.45 Inter,Arial,sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#7A5A45;vertical-align:top;width:170px;">${escapeHtml(label)}</td>
+      <td style="padding:10px 12px;border-bottom:1px solid rgba(201,168,130,0.28);font:400 15px/1.55 Inter,Arial,sans-serif;color:#1C0E06;vertical-align:top;">${escapeHtml(displayValue).replace(/\n/g, '<br>')}</td>
+    </tr>`;
+}
+
+function buildTeacherNotificationMail({ data, locaties, dateAnalysis }) {
+  const name = fullName(data) || 'Onbekende aanvrager';
+  const firstDate = dateAnalysis[0]?.formatted || formatDateNl(data['PcvLnGah3B']);
+  const subject = `Nieuwe proeflesaanmelding - ${name}`;
+  const invalidWarning = buildDateWarningText(dateAnalysis);
+  const dateValue = dateAnalysis
+    .map(item => `${item.label}: ${item.formatted}${item.valid ? '' : ' (controle nodig)'}`)
+    .join('\n');
+
+  const rows = [
+    buildNotificationRow('Naam', name, { alwaysShow: true }),
+    buildNotificationRow('E-mail', data['PI6DA7TLP7'], { alwaysShow: true }),
+    buildNotificationRow('Telefoon', data['zZH7Jm1GrV'], { alwaysShow: true }),
+    buildNotificationRow('Leeftijd', data['WEiUDNfM7O']),
+    buildNotificationRow('Student', data['wQHcc605z4']),
+    buildNotificationRow('Geslacht', data['rmF5mwHbQm']),
+    buildNotificationRow('Locatie', locaties),
+    buildNotificationRow('Gekozen data', dateValue, { alwaysShow: true }),
+    buildNotificationRow('Waarom Aikido?', data['f9g5G3RavQ'], { alwaysShow: true }),
+    buildNotificationRow('Opmerking', data['kjrtQYYCLh'], { alwaysShow: true }),
+  ].join('');
+  const replyEmail = encodeURIComponent(String(data['PI6DA7TLP7'] || '').trim());
+  const replySubject = encodeURIComponent('Re: proefles Ima Juku');
+
+  const text = `Nieuwe proeflesaanmelding
+
+Naam: ${name}
+E-mail: ${data['PI6DA7TLP7'] || ''}
+Telefoon: ${data['zZH7Jm1GrV'] || ''}
+Leeftijd: ${data['WEiUDNfM7O'] || ''}
+Student: ${data['wQHcc605z4'] || ''}
+Geslacht: ${data['rmF5mwHbQm'] || ''}
+Locatie: ${locaties.join(', ')}
+Gekozen data:
+${dateValue}
+${invalidWarning ? `\n${invalidWarning}\n` : ''}
+Waarom Aikido?
+${data['f9g5G3RavQ'] || ''}
+
+Opmerking:
+${data['kjrtQYYCLh'] || ''}`;
+
+  const warningHtml = invalidWarning ? `
+    <div style="margin:0 0 18px;padding:12px 14px;border-left:4px solid #C42B1A;background:#f5deda;color:#1C0E06;font:400 14px/1.55 Inter,Arial,sans-serif;">
+      ${escapeHtml(invalidWarning)}
+    </div>` : '';
+
+  const html = `
+    <div style="margin:0;padding:0;background:#F8F0E3;">
+      <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="border-collapse:collapse;background:#F8F0E3;">
+        <tr>
+          <td align="center" style="padding:28px 16px;">
+            <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="border-collapse:collapse;max-width:680px;background:#FDF8F2;border:1px solid rgba(201,168,130,0.35);">
+              <tr>
+                <td style="padding:24px 26px;background:#3A1A0A;color:#FDF8F2;">
+                  <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="border-collapse:collapse;">
+                    <tr>
+                      <td style="vertical-align:middle;">
+                        <div style="font:600 11px/1.4 Inter,Arial,sans-serif;letter-spacing:.16em;text-transform:uppercase;color:#D4820A;">Ima Juku Aikido</div>
+                        <h1 style="margin:6px 0 0;font:400 30px/1.12 Georgia,'Times New Roman',serif;color:#FDF8F2;">Nieuwe proeflesaanmelding</h1>
+                      </td>
+                      <td align="right" style="vertical-align:middle;width:70px;">
+                        <img src="https://www.imajuku.nl/logo%20ima%20juku.png" alt="" width="52" height="52" style="display:block;border-radius:50%;opacity:.9;">
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+              <tr>
+                <td style="padding:24px 26px 8px;">
+                  <p style="margin:0 0 6px;font:400 15px/1.65 Inter,Arial,sans-serif;color:#7A5A45;">${escapeHtml(name)} heeft het proeflesformulier ingevuld.</p>
+                  <p style="margin:0 0 18px;font:600 18px/1.4 Inter,Arial,sans-serif;color:#1C0E06;">Eerste gekozen datum: ${escapeHtml(firstDate)}</p>
+                  ${warningHtml}
+                  <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="border-collapse:collapse;border-top:1px solid rgba(201,168,130,0.35);">
+                    ${rows}
+                  </table>
+                </td>
+              </tr>
+              <tr>
+                <td style="padding:18px 26px 26px;">
+                  <a href="mailto:${replyEmail}?subject=${replySubject}" style="display:inline-block;background:#C42B1A;color:#fff;text-decoration:none;font:600 14px/1 Inter,Arial,sans-serif;padding:13px 18px;border-radius:4px;">Reageer op aanvrager</a>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+      </table>
+    </div>`;
+
+  return { subject, text, html };
+}
+
+function buildApplicantDateCard(item) {
+  const borderColor = item.valid ? '#D4820A' : '#C42B1A';
+  const note = item.valid ? 'Gekozen proeflesdatum' : 'Controle nodig';
+  return `
+    <tr>
+      <td style="padding:0 0 12px;vertical-align:top;">
+        <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="border-collapse:collapse;background:#FBF0D5;border-left:4px solid ${borderColor};">
+          <tr>
+            <td style="padding:14px 16px;">
+              <div style="font:600 11px/1.4 Inter,Arial,sans-serif;letter-spacing:.12em;text-transform:uppercase;color:#7A5A45;">${escapeHtml(item.label)} · ${note}</div>
+              <div style="margin-top:4px;font:600 18px/1.35 Inter,Arial,sans-serif;color:#1C0E06;">${escapeHtml(item.formatted)}</div>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>`;
+}
+
+function buildApplicantReceiptMail({ data, locaties, dateAnalysis }) {
+  const firstName = data['VCQticEHHg'] || 'daar';
+  const name = fullName(data) || firstName;
+  const subject = `Je proeflesaanvraag bij Ima Juku - ${name}`;
+  const invalidWarning = buildDateWarningText(dateAnalysis);
+  const dateValue = dateAnalysis
+    .map(item => `${item.label}: ${item.formatted}${item.valid ? '' : ' (controle nodig)'}`)
+    .join('\n');
+  const dateCards = dateAnalysis.map(buildApplicantDateCard).join('');
+  const rows = [
+    buildNotificationRow('Naam', name, { alwaysShow: true }),
+    buildNotificationRow('E-mail', data['PI6DA7TLP7'], { alwaysShow: true }),
+    buildNotificationRow('Telefoon', data['zZH7Jm1GrV'], { alwaysShow: true }),
+    buildNotificationRow('Leeftijd', data['WEiUDNfM7O']),
+    buildNotificationRow('Student', data['wQHcc605z4']),
+    buildNotificationRow('Geslacht', data['rmF5mwHbQm']),
+    buildNotificationRow('Locatie', locaties),
+    buildNotificationRow('Gekozen data', dateValue, { alwaysShow: true }),
+    buildNotificationRow('Waarom Aikido?', data['f9g5G3RavQ'], { alwaysShow: true }),
+    buildNotificationRow('Opmerking', data['kjrtQYYCLh'], { alwaysShow: true }),
+  ].join('');
+
+  const text = `Beste ${firstName},
+
+Dank je wel voor je proeflesaanvraag bij Ima Juku Aikido.
+
+Deze data heb je opgegeven:
+${dateValue}
+
+We nemen persoonlijk contact met je op om de datum te bevestigen.
+${invalidWarning ? `\n${invalidWarning}\n` : ''}
+Dit heb je ingevuld:
+
+Naam: ${name}
+E-mail: ${data['PI6DA7TLP7'] || ''}
+Telefoon: ${data['zZH7Jm1GrV'] || ''}
+Leeftijd: ${data['WEiUDNfM7O'] || ''}
+Student: ${data['wQHcc605z4'] || ''}
+Geslacht: ${data['rmF5mwHbQm'] || ''}
+Locatie: ${locaties.join(', ')}
+Waarom Aikido?
+${data['f9g5G3RavQ'] || ''}
+
+Opmerking:
+${data['kjrtQYYCLh'] || ''}
+
+Vriendelijke groet,
+
+Arjan de Vries
+Ima Juku Aikido`;
+
+  const warningHtml = invalidWarning ? `
+    <div style="margin:0 0 20px;padding:12px 14px;border-left:4px solid #C42B1A;background:#f5deda;color:#1C0E06;font:400 14px/1.55 Inter,Arial,sans-serif;">
+      ${escapeHtml(invalidWarning)}
+    </div>` : '';
+
+  const html = `
+    <div style="margin:0;padding:0;background:#F8F0E3;">
+      <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="border-collapse:collapse;background:#F8F0E3;">
+        <tr>
+          <td align="center" style="padding:28px 16px;">
+            <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="border-collapse:collapse;max-width:680px;background:#FDF8F2;border:1px solid rgba(201,168,130,0.35);">
+              <tr>
+                <td style="padding:24px 26px;background:#3A1A0A;color:#FDF8F2;">
+                  <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="border-collapse:collapse;">
+                    <tr>
+                      <td style="vertical-align:middle;">
+                        <div style="font:600 11px/1.4 Inter,Arial,sans-serif;letter-spacing:.16em;text-transform:uppercase;color:#D4820A;">Ima Juku Aikido</div>
+                        <h1 style="margin:6px 0 0;font:400 30px/1.12 Georgia,'Times New Roman',serif;color:#FDF8F2;">Je proeflesaanvraag</h1>
+                      </td>
+                      <td align="right" style="vertical-align:middle;width:70px;">
+                        <img src="https://www.imajuku.nl/logo%20ima%20juku.png" alt="" width="52" height="52" style="display:block;border-radius:50%;opacity:.9;">
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+              <tr>
+                <td style="padding:24px 26px 8px;">
+                  <p style="margin:0 0 6px;font:400 15px/1.65 Inter,Arial,sans-serif;color:#7A5A45;">Beste ${escapeHtml(firstName)}, dank je wel voor je proeflesaanvraag bij Ima Juku Aikido.</p>
+                  <p style="margin:0 0 18px;font:600 18px/1.45 Inter,Arial,sans-serif;color:#1C0E06;">Deze data heb je opgegeven. We nemen persoonlijk contact met je op om de datum te bevestigen.</p>
+                  <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="border-collapse:collapse;margin:0 0 8px;">
+                    ${dateCards}
+                  </table>
+                  ${warningHtml}
+                  <h2 style="margin:22px 0 10px;font:400 24px/1.2 Georgia,'Times New Roman',serif;color:#3A1A0A;">Jouw gegevens</h2>
+                  <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="border-collapse:collapse;border-top:1px solid rgba(201,168,130,0.35);">
+                    ${rows}
+                  </table>
+                </td>
+              </tr>
+              <tr>
+                <td style="padding:18px 26px 26px;">
+                  <p style="margin:0;font:400 15px/1.65 Inter,Arial,sans-serif;color:#1C0E06;">Vriendelijke groet,<br><br>Arjan de Vries<br>Ima Juku Aikido</p>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+      </table>
+    </div>`;
+
+  return { subject, text, html };
+}
+
 async function createTeacherDraftSafely({ data, locaties, dateAnalysis, reason }) {
   if (process.env.ENABLE_GMAIL_DRAFTS !== 'true') {
     console.log('Gmail-concept proefles uitgeschakeld', JSON.stringify({ reason }));
@@ -521,6 +792,56 @@ async function createTeacherDraftSafely({ data, locaties, dateAnalysis, reason }
     }));
   } catch (draftErr) {
     console.error('Gmail-concept proefles mislukt:', draftErr);
+  }
+}
+
+async function sendApplicantReceiptSafely({ data, locaties, dateAnalysis, reason }) {
+  if (process.env.ENABLE_GMAIL_RECEIPTS === 'false') {
+    console.log('Gmail-bevestiging proefles uitgeschakeld', JSON.stringify({ reason }));
+    return;
+  }
+
+  try {
+    const receiptMail = buildApplicantReceiptMail({ data, locaties, dateAnalysis });
+    const receipt = await sendGmailMessage({
+      to: data['PI6DA7TLP7'],
+      mail: receiptMail,
+    });
+    if (!receipt) {
+      console.log('Gmail-bevestiging proefles overgeslagen', JSON.stringify({ reason }));
+      return;
+    }
+    console.log('Gmail-bevestiging proefles verstuurd', JSON.stringify({
+      messageId: receipt?.id || null,
+      reason,
+    }));
+  } catch (receiptErr) {
+    console.error('Gmail-bevestiging proefles mislukt:', receiptErr);
+  }
+}
+
+async function sendTeacherNotificationSafely({ data, locaties, dateAnalysis, reason }) {
+  if (process.env.ENABLE_GMAIL_NOTIFICATIONS !== 'true') {
+    console.log('Gmail-notificatie proefles uitgeschakeld', JSON.stringify({ reason }));
+    return;
+  }
+
+  try {
+    const notificationMail = buildTeacherNotificationMail({ data, locaties, dateAnalysis });
+    const notification = await sendGmailMessage({
+      to: process.env.GMAIL_NOTIFICATION_TO || 'info@imajuku.nl',
+      mail: notificationMail,
+    });
+    if (!notification) {
+      console.log('Gmail-notificatie proefles overgeslagen', JSON.stringify({ reason }));
+      return;
+    }
+    console.log('Gmail-notificatie proefles verstuurd', JSON.stringify({
+      messageId: notification?.id || null,
+      reason,
+    }));
+  } catch (notificationErr) {
+    console.error('Gmail-notificatie proefles mislukt:', notificationErr);
   }
 }
 
@@ -560,7 +881,6 @@ module.exports = async function handler(req, res) {
         { label: 'Proefles 2', value: d['FevVlZuZWq'] || '' },
       ],
     });
-    await createTeacherDraftSafely({ data: d, locaties, dateAnalysis, reason: 'form-submit' });
 
     const apiKey = process.env.LAPOSTA_API_KEY;
     if (!apiKey) {
@@ -603,6 +923,9 @@ module.exports = async function handler(req, res) {
     console.log('Laposta status:', lapostaRes.status, JSON.stringify(result));
 
     if (lapostaRes.ok) {
+      await sendApplicantReceiptSafely({ data: d, locaties, dateAnalysis, reason: 'laposta-new-member' });
+      await sendTeacherNotificationSafely({ data: d, locaties, dateAnalysis, reason: 'laposta-new-member' });
+      await createTeacherDraftSafely({ data: d, locaties, dateAnalysis, reason: 'laposta-new-member' });
       return res.redirect(302, '/bedankt');
     }
 

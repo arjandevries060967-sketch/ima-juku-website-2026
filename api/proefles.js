@@ -196,10 +196,10 @@ function encodeHeader(value) {
   return `=?UTF-8?B?${Buffer.from(header, 'utf8').toString('base64')}?=`;
 }
 
-function buildFromHeader(from) {
+function buildFromHeader(from, fromName) {
   const header = compactHeader(from);
   if (!header || header.includes('<')) return header;
-  const displayName = process.env.GMAIL_FROM_NAME || 'Ima Juku Aikido';
+  const displayName = fromName || process.env.GMAIL_FROM_NAME || 'Ima Juku Aikido';
   return `${encodeHeader(displayName)} <${header}>`;
 }
 
@@ -412,10 +412,10 @@ function base64Url(value) {
     .replace(/=+$/g, '');
 }
 
-function buildMimeMessage({ from, to, subject, text, html }) {
+function buildMimeMessage({ from, fromName, to, subject, text, html }) {
   const boundary = `ima-juku-${Date.now()}`;
   return [
-    `From: ${buildFromHeader(from)}`,
+    `From: ${buildFromHeader(from, fromName)}`,
     `To: ${compactHeader(to)}`,
     `Subject: ${encodeHeader(subject)}`,
     'MIME-Version: 1.0',
@@ -529,6 +529,7 @@ async function sendGmailMessage({ to, mail }) {
 
   const raw = base64Url(buildMimeMessage({
     from,
+    fromName: mail.fromName,
     to,
     subject: mail.subject,
     text: mail.text,
@@ -568,6 +569,7 @@ function buildNotificationRow(label, value, options = {}) {
 function buildTeacherNotificationMail({ data, locaties, dateAnalysis }) {
   const name = fullName(data) || 'Onbekende aanvrager';
   const firstDate = dateAnalysis[0]?.formatted || formatDateNl(data['PcvLnGah3B']);
+  const fromName = 'Proeflesaanvraag Ima Juku';
   const subject = `Nieuwe proeflesaanmelding - ${name}`;
   const invalidWarning = buildDateWarningText(dateAnalysis);
   const dateValue = dateAnalysis
@@ -654,7 +656,7 @@ ${data['kjrtQYYCLh'] || ''}`;
       </table>
     </div>`;
 
-  return { subject, text, html };
+  return { fromName, subject, text, html };
 }
 
 function buildApplicantDateCard(item) {

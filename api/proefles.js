@@ -196,6 +196,13 @@ function encodeHeader(value) {
   return `=?UTF-8?B?${Buffer.from(header, 'utf8').toString('base64')}?=`;
 }
 
+function buildFromHeader(from) {
+  const header = compactHeader(from);
+  if (!header || header.includes('<')) return header;
+  const displayName = process.env.GMAIL_FROM_NAME || 'Ima Juku Aikido';
+  return `${encodeHeader(displayName)} <${header}>`;
+}
+
 function fullName(data) {
   return [data['VCQticEHHg'], data['FEqqKfvEJN']]
     .map(part => String(part || '').trim())
@@ -408,7 +415,7 @@ function base64Url(value) {
 function buildMimeMessage({ from, to, subject, text, html }) {
   const boundary = `ima-juku-${Date.now()}`;
   return [
-    `From: ${compactHeader(from)}`,
+    `From: ${buildFromHeader(from)}`,
     `To: ${compactHeader(to)}`,
     `Subject: ${encodeHeader(subject)}`,
     'MIME-Version: 1.0',
